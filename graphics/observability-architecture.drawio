@@ -1,0 +1,48 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/26.0.3 Chrome/130.0.6723.137 Electron/33.2.1 Safari/537.36" version="26.0.3">
+  <diagram name="Page-1" id="6Us45bZ7BgL1ditrrXL7">
+    <mxGraphModel dx="972" dy="580" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="fmnLKLAL4xbRukRoTZjl-3" value="Backend&amp;nbsp;&lt;div&gt;Applications&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;glass=0;shadow=1;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=12;strokeColor=#C3ABD0;" vertex="1" parent="1">
+          <mxGeometry x="42" y="360" width="130" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="fmnLKLAL4xbRukRoTZjl-4" value="Infrastructure" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;glass=0;shadow=1;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=12;strokeColor=#C3ABD0;" vertex="1" parent="1">
+          <mxGeometry x="42" y="440" width="130" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="fmnLKLAL4xbRukRoTZjl-5" value="Frontend&lt;div&gt;Applications&amp;nbsp;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;glass=0;shadow=1;strokeColor=#C3ABD0;" vertex="1" parent="1">
+          <mxGeometry x="42" y="280" width="130" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="fmnLKLAL4xbRukRoTZjl-11" value="&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;b&gt;Instrumentation&lt;/b&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: rgba(0, 0, 0, 0); font-family: monospace; font-size: 0px; text-align: start; text-wrap-mode: nowrap; background-color: transparent;&quot;&gt;%3CmxGraphModel%3E%3Croot%3E%3CmxCell%20id%3D%220%22%2F%3E%3CmxCell%20id%3D%221%22%20parent%3D%220%22%2F%3E%3CmxCell%20id%3D%222%22%20value%3D%22Item%203%22%20style%3D%22text%3BstrokeColor%3Dnone%3BfillColor%3Dnone%3Balign%3Dleft%3BverticalAlign%3Dmiddle%3BspacingLeft%3D4%3BspacingRight%3D4%3Boverflow%3Dhidden%3Bpoints%3D%5B%5B0%2C0.5%5D%2C%5B1%2C0.5%5D%5D%3BportConstraint%3Deastwest%3Brotatable%3D0%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3BfontFamily%3DHelvetica%3BfontSize%3D12%3BfontColor%3Ddefault%3B%22%20vertex%3D%221%22%20parent%3D%221%22%3E%3CmxGeometry%20x%3D%22540%22%20y%3D%22270%22%20width%3D%22140%22%20height%3D%2230%22%20as%3D%22geometry%22%2F%3E%3C%2FmxCell%3E%3C%2Froot%3E%3C%2FmxGraphModel%3E&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;OpenTelemetry&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;i&gt;or&lt;/i&gt;&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Prometheus&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;Exporters&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;i&gt;or&lt;/i&gt;&lt;/div&gt;&lt;div&gt;Log Forwarders&lt;/div&gt;" style="shape=or;whiteSpace=wrap;html=1;rounded=1;shadow=1;glass=0;sketch=1;jiggle=2;curveFitting=1;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=12;strokeColor=#C3ABD0;" vertex="1" parent="1">
+          <mxGeometry x="182" y="280" width="116" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="fmnLKLAL4xbRukRoTZjl-17" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Helvetica;fontSize=12;fontColor=default;endArrow=block;endFill=1;sketch=1;curveFitting=1;jiggle=2;shadow=1;flowAnimation=0;strokeColor=#C3ABD0;" edge="1" parent="1" source="fmnLKLAL4xbRukRoTZjl-27" target="fmnLKLAL4xbRukRoTZjl-16">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="430" y="390" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="fmnLKLAL4xbRukRoTZjl-16" value="&lt;b&gt;Collector Agent&lt;/b&gt;&lt;div&gt;Prometheus Scraping&lt;/div&gt;&lt;div&gt;&lt;i&gt;or&lt;/i&gt;&lt;/div&gt;&lt;div&gt;Open Telemetry Collector&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;shadow=1;glass=0;sketch=1;jiggle=2;curveFitting=1;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=12;strokeColor=#C3ABD0;" vertex="1" parent="1">
+          <mxGeometry x="430" y="330" width="160" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="fmnLKLAL4xbRukRoTZjl-31" value="" style="edgeStyle=orthogonalEdgeStyle;shape=connector;rounded=0;sketch=1;jiggle=2;curveFitting=1;orthogonalLoop=1;jettySize=auto;html=1;shadow=1;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=12;fontColor=default;labelBackgroundColor=default;endArrow=block;endFill=1;flowAnimation=0;strokeColor=#C3ABD0;" edge="1" parent="1" source="fmnLKLAL4xbRukRoTZjl-19" target="fmnLKLAL4xbRukRoTZjl-25">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fmnLKLAL4xbRukRoTZjl-19" value="&lt;div&gt;&lt;b&gt;Telemetry Backends&lt;/b&gt;&lt;/div&gt;Loki&lt;div&gt;Tempo&lt;/div&gt;&lt;div&gt;Mimir&lt;/div&gt;&lt;div&gt;Pyroscope&lt;/div&gt;" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;rounded=1;shadow=1;glass=0;sketch=1;jiggle=2;curveFitting=1;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=12;strokeColor=#C3ABD0;" vertex="1" parent="1">
+          <mxGeometry x="620" y="330" width="130" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="fmnLKLAL4xbRukRoTZjl-25" value="&lt;b&gt;Vizualisation&lt;/b&gt;&lt;div&gt;Grafana&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;shadow=1;glass=0;sketch=1;jiggle=2;curveFitting=1;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=12;strokeColor=#C3ABD0;" vertex="1" parent="1">
+          <mxGeometry x="625" y="210" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="fmnLKLAL4xbRukRoTZjl-27" value="&lt;div&gt;&lt;b&gt;Telemetry&lt;/b&gt;&lt;/div&gt;&lt;div&gt;&lt;b&gt;Signals&lt;/b&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;Logs&lt;div&gt;Traces&lt;/div&gt;&lt;div&gt;Metrics&lt;/div&gt;&lt;div&gt;Profiles&lt;/div&gt;" style="shape=xor;whiteSpace=wrap;html=1;rounded=1;shadow=1;glass=0;sketch=1;jiggle=2;curveFitting=1;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=12;strokeColor=#C3ABD0;" vertex="1" parent="1">
+          <mxGeometry x="280" y="280" width="120" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="fmnLKLAL4xbRukRoTZjl-30" value="" style="endArrow=classic;html=1;rounded=0;shadow=1;sketch=1;jiggle=2;curveFitting=1;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=12;fontColor=default;labelBackgroundColor=default;edgeStyle=orthogonalEdgeStyle;flowAnimation=0;strokeColor=#C3ABD0;" edge="1" parent="1" source="fmnLKLAL4xbRukRoTZjl-16" target="fmnLKLAL4xbRukRoTZjl-19">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="330" y="420" as="sourcePoint" />
+            <mxPoint x="380" y="370" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
