@@ -63,15 +63,21 @@ For development purposes you can use the all in one otel-lgtm docker image :
 ![Docker OTEL-LGTM](https://github.com/grafana/docker-otel-lgtm/blob/main/img/overview.png?raw=true)
 
 ```bash
-docker run -d -p 3000:3000 \
+docker run --name lgtm -d -p 3000:3000 \
   -p 4317:4317 \
   -p 4318:4318 \
   -p 9090:9090 \
+  -p 4417:4417 \
   -p 4418:4418 \
   -p 3100:3100 \
   -p 4040:4040 \
   grafana/otel-lgtm
 ```
+
+
+
+You can also run it in kubernetes. Again, this is really just for development purposes not intended for production workloads.
+
 
 #### 3.2.1 The hard way! Run each component separately
 
@@ -105,8 +111,27 @@ These instances of Grafana Alloy also expose an OpenTelemetry Collector endpoint
 
 Here is a quickstart [install script](src/alloy-k8s-deploy.sh) with values for the most common usage on a vanilla k8s cluster.
 
-```
+```bash
+export KUBE_CLUSTER_NAME=sandbox
+export ALLOY_NAMESPACE=default
 
+export OTLP_URL=http://lgtm:4318
+export OTLP_USER=otlpuser
+export OTLP_PASSWORD=otlppassword
+
+export PROM_URL=http://lgtm:9090
+export PROM_USER=promuser
+export PROM_PASSWORD=prompassword
+
+export LOKI_URL=http://lgtm:3100
+export LOKI_USER=lokiuser
+export LOKI_PASSWORD=lokipassword
+
+export PROFILES_URL=http://lgtm:4040
+export PROFILES_USER=profilesuser
+export PROFILES_PASSWORD=profilespassword
+
+bash <(curl -sSL https://raw.githubusercontent.com/alainpham/observability-with-opentelemetry-and-prometheus/refs/heads/master/src/alloy-k8s-deploy.sh?token=GHSAT0AAAAAADFVOORXAL64YKGMNJWGSSPK2DFGVNA)
 ```
 
 If you are using Grafana Cloud, you 
@@ -114,7 +139,6 @@ If you are using Grafana Cloud, you
 Links to different resources : 
 - [Documentation of Helm Chart](https://github.com/grafana/k8s-monitoring-helm/blob/main/charts/k8s-monitoring/README.md)
 - [Examples of Helm chart value files](https://github.com/grafana/k8s-monitoring-helm/tree/main/charts/k8s-monitoring/docs/examples)
-- 
 
 
 
