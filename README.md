@@ -122,8 +122,9 @@ export OTLP_USER=otlpuser
 export OTLP_PASSWORD=otlppassword
 
 export PROM_URL=http://lgtm:9090
-export PROM_API_PATH=/api/v1
-export PROM_REMOTEWRITE_PATH=/write
+export PROM_REMOTEWRITE_PATH=/api/v1/write
+# for grafana cloud : export PROM_REMOTEWRITE_PATH=/api/prom/push
+
 export PROM_USER=promuser
 export PROM_PASSWORD=prompassword
 

@@ -1,4 +1,25 @@
 #!/bin/bash
+
+if [ -z "${ALLOY_NAMESPACE}" ]; then
+  ALLOY_NAMESPACE="default"
+fi
+
+if [ -z "${KUBE_CLUSTER_NAME}" ]; then
+  KUBE_CLUSTER_NAME="$WILDCARD_DOMAIN"
+fi
+
+if [ -z "${KUBE_CLUSTER_NAME}" ]; then
+  KUBE_CLUSTER_NAME="sandbox"
+fi
+
+if [ -z "${PROM_REMOTEWRITE_PATH}" ]; then
+  PROM_REMOTEWRITE_PATH="/api/prom/push"
+fi
+
+if [ "${PROM_REMOTEWRITE_PATH}" = "/api/prom/push" ]; then
+  PROM_QUERY_PATH="/api/prom"
+fi
+
 helm repo add grafana https://grafana.github.io/helm-charts &&
   helm repo update &&
   helm upgrade --install --atomic --timeout 300s grafana-k8s-monitoring grafana/k8s-monitoring \
@@ -8,7 +29,7 @@ cluster:
 destinations:
   - name: grafana-cloud-metrics
     type: prometheus
-    url: ${PROM_URL}${PROM_API_PATH}${PROM_REMOTEWRITE_PATH}
+    url: ${PROM_URL}${PROM_REMOTEWRITE_PATH}
     auth:
       type: basic
       username: "${PROM_USER}"
@@ -52,7 +73,7 @@ clusterMetrics:
       prometheus:
         existingSecretName: grafana-cloud-metrics-grafana-k8s-monitoring
         external:
-          url: ${PROM_URL}${PROM_API_PATH}
+          url: ${PROM_URL}${PROM_QUERY_PATH}
   kepler:
     enabled: true
 annotationAutodiscovery:
