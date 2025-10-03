@@ -75,9 +75,11 @@ docker run --name lgtm -d -p 3000:3000 \
 ```
 
 
-
 You can also run it in kubernetes. Again, this is really just for development purposes not intended for production workloads.
 
+```sh
+kubectl apply -f https://raw.githubusercontent.com/alainpham/observability-with-opentelemetry-and-prometheus/refs/heads/master/src/lgtm.k8s.yaml -n default
+```
 
 #### 3.2.1 The hard way! Run each component separately
 
@@ -131,7 +133,10 @@ export PROFILES_URL=http://lgtm:4040
 export PROFILES_USER=profilesuser
 export PROFILES_PASSWORD=profilespassword
 
-bash <(curl -sSL https://raw.githubusercontent.com/alainpham/observability-with-opentelemetry-and-prometheus/refs/heads/master/src/alloy-k8s-deploy.sh?token=GHSAT0AAAAAADFVOORXAL64YKGMNJWGSSPK2DFGVNA)
+# comma separated list of namespaces
+export APP_NAMESPACES=apps
+
+curl -L https://raw.githubusercontent.com/alainpham/observability-with-opentelemetry-and-prometheus/refs/heads/master/src/alloy-k8s-deploy.sh | sh
 ```
 
 If you are using Grafana Cloud, you 

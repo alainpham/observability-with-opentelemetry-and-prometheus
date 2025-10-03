@@ -48,7 +48,7 @@ clusterMetrics:
     metricsSource: grafana-cloud-metrics
     opencost:
       exporter:
-        defaultClusterId: codersandbox.com
+        defaultClusterId: ${KUBE_CLUSTER_NAME}
       prometheus:
         existingSecretName: grafana-cloud-metrics-grafana-k8s-monitoring
         external:
@@ -82,24 +82,11 @@ applicationObservability:
 profiling:
   enabled: true
   ebpf:
-    enabled: false
+    enabled: true
+    namespaces: [ ${APP_NAMESPACES} ]
   java:
     enabled: true
-    annotationSelectors:
-      profiles.grafana.com/java.enabled: "true"
-    extraDiscoveryRules: |
-      rule {
-        source_labels = ["__meta_kubernetes_pod_annotation_resource_opentelemetry_io_service_name"]
-        regex = "(.+)"
-        target_label = "service_name"
-      }
-    
-      rule {
-        action="replace"    
-        regex = "(.+)"
-        source_labels = ["__meta_kubernetes_pod_annotation_resource_opentelemetry_io_service_namespace"]
-        target_label = "namespace"
-      }
+    namespaces: [ ${APP_NAMESPACES} ]
   pprof:
     enabled: false
 integrations:
