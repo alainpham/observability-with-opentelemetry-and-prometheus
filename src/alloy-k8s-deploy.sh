@@ -8,7 +8,7 @@ cluster:
 destinations:
   - name: grafana-cloud-metrics
     type: prometheus
-    url: ${PROM_URL}/api/prom/push
+    url: ${PROM_URL}${PROM_API_PATH}${PROM_REMOTEWRITE_PATH}
     auth:
       type: basic
       username: "${PROM_USER}"
@@ -52,7 +52,7 @@ clusterMetrics:
       prometheus:
         existingSecretName: grafana-cloud-metrics-grafana-k8s-monitoring
         external:
-          url: ${PROM_URL}/api/prom
+          url: ${PROM_URL}${PROM_API_PATH}
   kepler:
     enabled: true
 annotationAutodiscovery:
