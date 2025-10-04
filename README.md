@@ -137,7 +137,7 @@ export PROFILES_USER=profilesuser
 export PROFILES_PASSWORD=profilespassword
 
 # comma separated list of namespaces
-export APP_NAMESPACES=apps
+export APP_NAMESPACES=apps,java-apps
 
 curl -L https://raw.githubusercontent.com/alainpham/observability-with-opentelemetry-and-prometheus/refs/heads/master/src/alloy-k8s-deploy.sh | sh
 ```
