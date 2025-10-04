@@ -43,7 +43,7 @@ destinations:
       password: $LOKI_PASSWORD
   - name: grafana-cloud-otlp-endpoint
     type: otlp
-    url: ${OTLP_URL}/otlp
+    url: ${OTLP_URL}
     protocol: http
     auth:
       type: basic

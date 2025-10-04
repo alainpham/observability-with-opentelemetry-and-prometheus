@@ -118,6 +118,7 @@ export KUBE_CLUSTER_NAME=sandbox
 export ALLOY_NAMESPACE=default
 
 export OTLP_URL=http://lgtm:4318
+# for grafana cloud add /otlp to path
 export OTLP_USER=otlpuser
 export OTLP_PASSWORD=otlppassword
 
