@@ -20,10 +20,6 @@ if [ "${PROM_REMOTEWRITE_PATH}" = "/api/prom/push" ]; then
   PROM_QUERY_PATH="/api/prom"
 fi
 
-if [ "${PROM_REMOTEWRITE_PATH}" = "/api/prom/push" ]; then
-  OTLP_PATH="/otlp"
-fi
-
 
 helm repo add grafana https://grafana.github.io/helm-charts &&
   helm repo update &&
@@ -46,9 +42,9 @@ destinations:
       type: basic
       username: "${LOKI_USER}"
       password: $LOKI_PASSWORD
-  - name: grafana-cloud-otlp-endpoint
+  - name: gc-otlp
     type: otlp
-    url: ${OTLP_URL}${OTLP_PATH}
+    url: ${OTLP_URL}/otlp
     protocol: http
     auth:
       type: basic
@@ -71,7 +67,7 @@ destinations:
           - deployment.environment.name
           - k8s.cluster.name
       tailSampling:
-        enabled: false
+        enabled: true
         decisionWait: 5s
         decisionCache:
           nonSampledCacheSize: 10000
@@ -111,7 +107,7 @@ destinations:
 clusterMetrics:
   enabled: true
   opencost:
-    enabled: true
+    enabled: false
     metricsSource: grafana-cloud-metrics
     opencost:
       exporter:
@@ -146,6 +142,25 @@ applicationObservability:
   connectors:
     grafanaCloudMetrics:
       enabled: true
+    spanMetrics:
+      enabled: true
+      exemplars:
+        enabled: true
+        max_per_data_point: 5
+      dimensions:
+        - name: service.name
+        - name: deployment.environment.name
+        - name: k8s.cluster.name
+        - name: k8s.namespace.name
+        - name: k8s.pod.name
+      histogram:
+        explicit:
+          buckets: ["0.1s", "0.5s", "0.75s", "1s", "2s", "5s"]
+        unit: "s"
+      transforms:
+        datapoint:
+          - set(resource.attributes["service.instance.id"], attributes["k8s.pod.name"]) where attributes["k8s.pod.name"] != nil
+          - set(resource.attributes["service.instance.id"], resource.attributes["k8s.pod.ip"]) where attributes["k8s.pod.name"] == nil
 profiling:
   enabled: true
   ebpf:
