@@ -20,6 +20,11 @@ if [ "${PROM_REMOTEWRITE_PATH}" = "/api/prom/push" ]; then
   PROM_QUERY_PATH="/api/prom"
 fi
 
+if [ "${PROM_REMOTEWRITE_PATH}" = "/api/prom/push" ]; then
+  OTLP_PATH="/otlp"
+fi
+
+
 helm repo add grafana https://grafana.github.io/helm-charts &&
   helm repo update &&
   helm upgrade --install --atomic --timeout 300s grafana-k8s-monitoring grafana/k8s-monitoring \
@@ -43,7 +48,7 @@ destinations:
       password: $LOKI_PASSWORD
   - name: grafana-cloud-otlp-endpoint
     type: otlp
-    url: ${OTLP_URL}
+    url: ${OTLP_URL}${OTLP_PATH}
     protocol: http
     auth:
       type: basic
@@ -55,6 +60,47 @@ destinations:
       enabled: true
     traces:
       enabled: true
+    processors:
+      serviceGraphMetrics:
+        enabled: true  
+        destinations: 
+          - grafana-cloud-metrics
+        dimensions:
+          - service.name
+          - service.namespace
+          - deployment.environment.name
+          - k8s.cluster.name
+      tailSampling:
+        enabled: false
+        decisionWait: 5s
+        decisionCache:
+          nonSampledCacheSize: 10000
+          sampledCacheSize: 10000
+        policies:
+          # Keep errors and unset status codes
+          - name: "keep-errors"
+            type: "status_code"
+            status_codes: ["ERROR"]
+          # Sample slow traces
+          - name: "sample-slow-traces"
+            type: "latency"
+            threshold_ms: 1000
+          # Sample traces with http.status_code between 399 and 599 and status code ERROR
+          - name: "and-policy"
+            type: and
+            and:
+              and_sub_policy:
+                - name: "keep-all-error-codes"
+                  type: numeric_attribute
+                  key: http.status_code
+                  min_value: 399
+                  max_value: 599
+                - name: "keep-all-errors"
+                  type: "status_code"
+                  status_codes: ["ERROR"]
+          - name: "sample-3pct-traces"
+            type: "probabilistic"
+            sampling_percentage: 10
   - name: grafana-cloud-profiles
     type: pyroscope
     url: ${PROFILES_URL}
