@@ -118,14 +118,12 @@ export KUBE_CLUSTER_NAME=sandbox
 export ALLOY_NAMESPACE=default
 
 export OTLP_URL=http://lgtm:4318
-# for grafana cloud add /otlp to path
 export OTLP_USER=otlpuser
 export OTLP_PASSWORD=otlppassword
 
 export PROM_URL=http://lgtm:9090
 export PROM_REMOTEWRITE_PATH=/api/v1/write
-# for grafana cloud : export PROM_REMOTEWRITE_PATH=/api/prom/push
-
+export PROM_PATH_FOR_OPENCOST_=/api/prom
 export PROM_USER=promuser
 export PROM_PASSWORD=prompassword
 

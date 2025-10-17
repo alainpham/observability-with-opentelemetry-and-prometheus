@@ -1,26 +1,5 @@
 #!/bin/bash
 
-if [ -z "${ALLOY_NAMESPACE}" ]; then
-  ALLOY_NAMESPACE="default"
-fi
-
-if [ -z "${KUBE_CLUSTER_NAME}" ]; then
-  KUBE_CLUSTER_NAME="$WILDCARD_DOMAIN"
-fi
-
-if [ -z "${KUBE_CLUSTER_NAME}" ]; then
-  KUBE_CLUSTER_NAME="sandbox"
-fi
-
-if [ -z "${PROM_REMOTEWRITE_PATH}" ]; then
-  PROM_REMOTEWRITE_PATH="/api/prom/push"
-fi
-
-if [ "${PROM_REMOTEWRITE_PATH}" = "/api/prom/push" ]; then
-  PROM_QUERY_PATH="/api/prom"
-fi
-
-
 helm repo add grafana https://grafana.github.io/helm-charts &&
   helm repo update &&
   helm upgrade --install --atomic --timeout 300s grafana-k8s-monitoring grafana/k8s-monitoring \
@@ -44,7 +23,7 @@ destinations:
       password: $LOKI_PASSWORD
   - name: gc-otlp
     type: otlp
-    url: ${OTLP_URL}/otlp
+    url: ${OTLP_URL}
     protocol: http
     auth:
       type: basic
@@ -58,7 +37,7 @@ destinations:
       enabled: true
     processors:
       serviceGraphMetrics:
-        enabled: true  
+        enabled: true
         destinations: 
           - grafana-cloud-metrics
         dimensions:
@@ -68,10 +47,6 @@ destinations:
           - k8s.cluster.name
       tailSampling:
         enabled: true
-        decisionWait: 5s
-        decisionCache:
-          nonSampledCacheSize: 10000
-          sampledCacheSize: 10000
         policies:
           # Keep errors and unset status codes
           - name: "keep-errors"
@@ -81,22 +56,9 @@ destinations:
           - name: "sample-slow-traces"
             type: "latency"
             threshold_ms: 1000
-          # Sample traces with http.status_code between 399 and 599 and status code ERROR
-          - name: "and-policy"
-            type: and
-            and:
-              and_sub_policy:
-                - name: "keep-all-error-codes"
-                  type: numeric_attribute
-                  key: http.status_code
-                  min_value: 399
-                  max_value: 599
-                - name: "keep-all-errors"
-                  type: "status_code"
-                  status_codes: ["ERROR"]
-          - name: "sample-3pct-traces"
+          - name: "standard-sampling"
             type: "probabilistic"
-            sampling_percentage: 10
+            sampling_percentage: 100
   - name: grafana-cloud-profiles
     type: pyroscope
     url: ${PROFILES_URL}
@@ -115,7 +77,7 @@ clusterMetrics:
       prometheus:
         existingSecretName: grafana-cloud-metrics-grafana-k8s-monitoring
         external:
-          url: ${PROM_URL}${PROM_QUERY_PATH}
+          url: ${PROM_URL}${PROM_PATH_FOR_OPENCOST_}
   kepler:
     enabled: true
 annotationAutodiscovery:
