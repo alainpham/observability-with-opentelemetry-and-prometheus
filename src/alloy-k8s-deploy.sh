@@ -78,6 +78,9 @@ clusterMetrics:
         existingSecretName: grafana-cloud-metrics-grafana-k8s-monitoring
         external:
           url: ${PROM_URL}${PROM_PATH_FOR_OPENCOST_}
+  node-exporter:
+    service:
+      port: 9101
   kepler:
     enabled: true
 annotationAutodiscovery:
