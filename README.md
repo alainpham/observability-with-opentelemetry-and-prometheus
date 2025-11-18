@@ -139,18 +139,28 @@ export GCLOUD_FARO=https://faro-collector-prod-eu-west-2.grafana.net/collect/TOK
 # comma separated list of namespaces
 export APP_NAMESPACES=apps,java-apps
 
+# 
 curl -L https://raw.githubusercontent.com/alainpham/observability-with-opentelemetry-and-prometheus/refs/heads/master/src/alloy-k8s-deploy.sh | sh
-envsubst '${GCLOUD_FARO} ${ALLOY_NAMESPACE}' < https://raw.githubusercontent.com/alainpham/observability-with-opentelemetry-and-prometheus/refs/heads/master/src/oteldemo/oteldemo.yaml | kubectl apply -n otel-demo -f -
 
 ```
-
-If you are using Grafana Cloud, you 
 
 Links to different resources : 
 - [Documentation of Helm Chart](https://github.com/grafana/k8s-monitoring-helm/blob/main/charts/k8s-monitoring/README.md)
 - [Examples of Helm chart value files](https://github.com/grafana/k8s-monitoring-helm/tree/main/charts/k8s-monitoring/docs/examples)
 
 
+Otel demo to send data to alloy
+
+```sh
+
+wget -O /tmp/oteldemo.yaml https://raw.githubusercontent.com/alainpham/observability-with-opentelemetry-and-prometheus/refs/heads/master/src/oteldemo/oteldemo.yaml 
+envsubst '${GCLOUD_FARO} ${ALLOY_NAMESPACE}' < /tmp/oteldemo.yaml| kubectl apply -n otel-demo -f -
+
+
+# optional ingress
+envsubst < curl - Lhttps://raw.githubusercontent.com/alainpham/observability-with-opentelemetry-and-prometheus/refs/heads/master/src/oteldemo/oteldemo/expose.yaml | kubectl apply -n otel-demo -f -
+
+```
 
 #### 4.1.2 Linux Docker hosts
 
