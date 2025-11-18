@@ -1,5 +1,5 @@
 #!/bin/bash
 
-envsubst '${GCLOUD_FARO}' < oteldemo/oteldemo.yaml | kubectl apply -n otel-demo -f -
+envsubst '${FARO_URL}' < oteldemo/oteldemo.yaml | kubectl apply -n otel-demo -f -
 envsubst < oteldemo/expose.yaml | kubectl apply -n otel-demo -f -
 
