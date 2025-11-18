@@ -135,12 +135,12 @@ export PROFILES_URL=http://lgtm:4040
 export PROFILES_USER=profilesuser
 export PROFILES_PASSWORD=profilespassword
 
-export FARO_URL=https://faro-collector-prod-eu-west-2.grafana.net/collect/TOKEN
+export GCLOUD_FARO=https://faro-collector-prod-eu-west-2.grafana.net/collect/TOKEN
 # comma separated list of namespaces
 export APP_NAMESPACES=apps,java-apps
 
 curl -L https://raw.githubusercontent.com/alainpham/observability-with-opentelemetry-and-prometheus/refs/heads/master/src/alloy-k8s-deploy.sh | sh
-envsubst '${FARO_URL} ${ALLOY_NAMESPACE}' < https://raw.githubusercontent.com/alainpham/observability-with-opentelemetry-and-prometheus/refs/heads/master/src/oteldemo/oteldemo.yaml | kubectl apply -n otel-demo -f -
+envsubst '${GCLOUD_FARO} ${ALLOY_NAMESPACE}' < https://raw.githubusercontent.com/alainpham/observability-with-opentelemetry-and-prometheus/refs/heads/master/src/oteldemo/oteldemo.yaml | kubectl apply -n otel-demo -f -
 
 ```
 
