@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: frontend-proxy
+  labels:
+    opentelemetry.io/name: frontend-proxy
+    app.kubernetes.io/name: "frontend-proxy"
+    app.kubernetes.io/component: "frontend-proxy"
+    app.kubernetes.io/part-of: "frontend-proxy"
+    app.kubernetes.io/instance: "frontend-proxy-main"
+    app.kubernetes.io/version: "2.0.1"
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-passthrough: "false"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  rules:
+  - host: oteldemo.${WILDCARD_DOMAIN}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend-proxy
+            port:
+              number: 8080
