@@ -7,14 +7,14 @@ helm repo add grafana https://grafana.github.io/helm-charts &&
 cluster:
   name: ${KUBE_CLUSTER_NAME}
 destinations:
-  - name: gc-metrics
+  - name: grafana-cloud-metrics
     type: prometheus
     url: ${PROM_URL}${PROM_REMOTEWRITE_PATH}
     auth:
       type: basic
       username: "${PROM_USER}"
       password: $PROM_PASSWORD
-  - name: gc-logs
+  - name: grafana-cloud-logs
     type: loki
     url: ${LOKI_URL}/loki/api/v1/push
     auth:
@@ -35,6 +35,30 @@ destinations:
       enabled: true
     traces:
       enabled: true
+    processors:
+      serviceGraphMetrics:
+        enabled: true
+        destinations: 
+          - grafana-cloud-metrics
+        dimensions:
+          - service.name
+          - service.namespace
+          - deployment.environment.name
+          - k8s.cluster.name
+      tailSampling:
+        enabled: true
+        policies:
+          # Keep errors and unset status codes
+          - name: "keep-errors"
+            type: "status_code"
+            status_codes: ["ERROR"]
+          # Sample slow traces
+          - name: "sample-slow-traces"
+            type: "latency"
+            threshold_ms: 1000
+          - name: "standard-sampling"
+            type: "probabilistic"
+            sampling_percentage: 100
   - name: grafana-cloud-profiles
     type: pyroscope
     url: ${PROFILES_URL}
@@ -83,6 +107,25 @@ applicationObservability:
   connectors:
     grafanaCloudMetrics:
       enabled: true
+    spanMetrics:
+      enabled: true
+      exemplars:
+        enabled: true
+        max_per_data_point: 5
+      dimensions:
+        - name: service.name
+        - name: deployment.environment.name
+        - name: k8s.cluster.name
+        - name: k8s.namespace.name
+        - name: k8s.pod.name
+      histogram:
+        explicit:
+          buckets: ["0.1s", "0.5s", "0.75s", "1s", "2s", "5s"]
+        unit: "s"
+      transforms:
+        datapoint:
+          - set(resource.attributes["service.instance.id"], attributes["k8s.pod.name"]) where attributes["k8s.pod.name"] != nil
+          - set(resource.attributes["service.instance.id"], resource.attributes["k8s.pod.ip"]) where attributes["k8s.pod.name"] == nil
 profiling:
   enabled: true
   ebpf:
