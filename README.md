@@ -11,6 +11,7 @@
   - [4. Instrumentation](#4-instrumentation)
     - [4.1 Infrastructure](#41-infrastructure)
       - [4.1.1 Kubernetes clusters](#411-kubernetes-clusters)
+      - [4.1.1 Apps from Open Telemetry Demo](#411-apps-from-open-telemetry-demo)
       - [4.1.2 Linux Docker hosts](#412-linux-docker-hosts)
       - [4.1.3 Linux Hosts](#413-linux-hosts)
       - [4.1.4 Windows Hosts](#414-windows-hosts)
@@ -149,16 +150,22 @@ Links to different resources :
 - [Examples of Helm chart value files](https://github.com/grafana/k8s-monitoring-helm/tree/main/charts/k8s-monitoring/docs/examples)
 
 
-Otel demo to send data to alloy
+#### 4.1.1 Apps from Open Telemetry Demo
+
+Run these commands to deploy the otel demo preconfigured to send otlp data to alloy deployed with the k8s monitoring helm chart.
 
 ```sh
-
+# otel demo yaml
 wget -O /tmp/oteldemo.yaml https://raw.githubusercontent.com/alainpham/observability-with-opentelemetry-and-prometheus/refs/heads/master/src/oteldemo/oteldemo.yaml 
+
 envsubst '${GCLOUD_FARO} ${ALLOY_NAMESPACE}' < /tmp/oteldemo.yaml| kubectl apply -n otel-demo -f -
 
 
 # optional ingress
-envsubst < curl - Lhttps://raw.githubusercontent.com/alainpham/observability-with-opentelemetry-and-prometheus/refs/heads/master/src/oteldemo/oteldemo/expose.yaml | kubectl apply -n otel-demo -f -
+
+wget -O /tmp/expose.yaml https://raw.githubusercontent.com/alainpham/observability-with-opentelemetry-and-prometheus/refs/heads/master/src/oteldemo/oteldemo/expose.yaml
+
+envsubst < /tmp/expose.yaml | kubectl apply -n otel-demo -f -
 
 ```
 
