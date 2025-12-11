@@ -69,7 +69,7 @@ destinations:
 clusterMetrics:
   enabled: true
   opencost:
-    enabled: false
+    enabled: true
     metricsSource: grafana-cloud-metrics
     opencost:
       exporter:

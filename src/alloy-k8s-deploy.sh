@@ -7,21 +7,21 @@ helm repo add grafana https://grafana.github.io/helm-charts &&
 cluster:
   name: ${KUBE_CLUSTER_NAME}
 destinations:
-  - name: gc-metrics
+  - name: grafana-cloud-metrics
     type: prometheus
     url: ${PROM_URL}${PROM_REMOTEWRITE_PATH}
     auth:
       type: basic
       username: "${PROM_USER}"
       password: $PROM_PASSWORD
-  - name: gc-logs
+  - name: grafana-cloud-logs
     type: loki
     url: ${LOKI_URL}/loki/api/v1/push
     auth:
       type: basic
       username: "${LOKI_USER}"
       password: $LOKI_PASSWORD
-  - name: gc-otlp
+  - name: gc-otlp-endpoint
     type: otlp
     url: ${OTLP_URL}
     protocol: http
