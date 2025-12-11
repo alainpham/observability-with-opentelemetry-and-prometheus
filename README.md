@@ -118,10 +118,6 @@ Here is a quickstart [install script](src/alloy-k8s-deploy.sh) with values for t
 export KUBE_CLUSTER_NAME=sandbox
 export ALLOY_NAMESPACE=default
 
-export OTLP_URL=http://lgtm:4318
-export OTLP_USER=otlpuser
-export OTLP_PASSWORD=otlppassword
-
 export PROM_URL=http://lgtm:9090
 export PROM_REMOTEWRITE_PATH=/api/v1/write
 export PROM_PATH_FOR_OPENCOST=/api/prom
@@ -131,6 +127,10 @@ export PROM_PASSWORD=prompassword
 export LOKI_URL=http://lgtm:3100
 export LOKI_USER=lokiuser
 export LOKI_PASSWORD=lokipassword
+
+export OTLP_URL=http://lgtm:4318
+export OTLP_USER=otlpuser
+export OTLP_PASSWORD=otlppassword
 
 export PROFILES_URL=http://lgtm:4040
 export PROFILES_USER=profilesuser
