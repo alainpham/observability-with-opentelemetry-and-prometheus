@@ -21,7 +21,7 @@ destinations:
       type: basic
       username: "${LOKI_USER}"
       password: $LOKI_PASSWORD
-  - name: gc-otlp
+  - name: gc-otlp-endpoint
     type: otlp
     url: ${OTLP_URL}
     protocol: http
@@ -77,7 +77,7 @@ clusterMetrics:
       prometheus:
         existingSecretName: grafana-cloud-metrics-grafana-k8s-monitoring
         external:
-          url: ${PROM_URL}${PROM_PATH_FOR_OPENCOST_}
+          url: ${PROM_URL}${PROM_PATH_FOR_OPENCOST}
   node-exporter:
     service:
       port: 9101
@@ -126,6 +126,10 @@ applicationObservability:
         datapoint:
           - set(resource.attributes["service.instance.id"], attributes["k8s.pod.name"]) where attributes["k8s.pod.name"] != nil
           - set(resource.attributes["service.instance.id"], resource.attributes["k8s.pod.ip"]) where attributes["k8s.pod.name"] == nil
+autoInstrumentation:
+  enabled: false
+  beyla:
+    deliverTracesToApplicationObservability: false
 profiling:
   enabled: true
   ebpf:

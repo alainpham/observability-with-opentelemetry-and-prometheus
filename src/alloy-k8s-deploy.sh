@@ -45,7 +45,7 @@ destinations:
 clusterMetrics:
   enabled: true
   opencost:
-    enabled: false
+    enabled: true
     metricsSource: grafana-cloud-metrics
     opencost:
       exporter:
@@ -53,7 +53,7 @@ clusterMetrics:
       prometheus:
         existingSecretName: grafana-cloud-metrics-grafana-k8s-monitoring
         external:
-          url: ${PROM_URL}${PROM_PATH_FOR_OPENCOST_}
+          url: ${PROM_URL}${PROM_PATH_FOR_OPENCOST}
   node-exporter:
     service:
       port: 9101
@@ -83,6 +83,10 @@ applicationObservability:
   connectors:
     grafanaCloudMetrics:
       enabled: true
+autoInstrumentation:
+  enabled: false
+  beyla:
+    deliverTracesToApplicationObservability: false
 profiling:
   enabled: true
   ebpf:

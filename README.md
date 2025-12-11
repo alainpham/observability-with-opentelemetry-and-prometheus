@@ -124,7 +124,7 @@ export OTLP_PASSWORD=otlppassword
 
 export PROM_URL=http://lgtm:9090
 export PROM_REMOTEWRITE_PATH=/api/v1/write
-export PROM_PATH_FOR_OPENCOST_=/api/prom
+export PROM_PATH_FOR_OPENCOST=/api/prom
 export PROM_USER=promuser
 export PROM_PASSWORD=prompassword
 
