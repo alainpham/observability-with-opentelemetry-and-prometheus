@@ -195,7 +195,7 @@ Populate configuration files, verify the following [file](src/alloy-linuxhost-co
 
 ```sh
 # setup aloy config file
-sudo curl -Lo https://raw.githubusercontent.com/alainpham/observability-with-opentelemetry-and-prometheus/refs/heads/master/src/alloy-linuxhost-config.alloy
+sudo curl -Lo /etc/alloy/config.alloy https://raw.githubusercontent.com/alainpham/observability-with-opentelemetry-and-prometheus/refs/heads/master/src/alloy-linuxhost-config.alloy
 
 # set endpoints env vars and credientials
 cat<<EOF | sudo tee /etc/default/alloy
@@ -228,6 +228,8 @@ GCLOUD_FARO=${GCLOUD_FARO}
 EOF
 
 
+sudo systemctl enable alloy.service
+sudo systemctl start alloy.service
 ```
 
 #### 4.1.4 Windows Hosts
