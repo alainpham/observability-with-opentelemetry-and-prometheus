@@ -9,7 +9,7 @@ cluster:
 destinations:
   - name: grafana-cloud-metrics
     type: prometheus
-    url: ${PROM_URL}${PROM_REMOTEWRITE_PATH}
+    url: "${PROM_URL}${PROM_REMOTEWRITE_PATH}"
     auth:
       type: basic
       username: "${PROM_USER}"
@@ -77,7 +77,7 @@ clusterMetrics:
       prometheus:
         existingSecretName: grafana-cloud-metrics-grafana-k8s-monitoring
         external:
-          url: ${PROM_URL}${PROM_PATH_FOR_OPENCOST}
+          url: "${PROM_URL}${PROM_PATH_FOR_OPENCOST}"
   node-exporter:
     service:
       port: 9101
