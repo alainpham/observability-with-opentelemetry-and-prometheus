@@ -9,6 +9,7 @@
       - [3.2.1 All in one Docker container](#321-all-in-one-docker-container)
       - [3.2.1 The hard way! Run each component separately](#321-the-hard-way-run-each-component-separately)
   - [4. Instrumentation](#4-instrumentation)
+  - [](#)
     - [4.1 Infrastructure](#41-infrastructure)
       - [4.1.1 Kubernetes clusters](#411-kubernetes-clusters)
       - [4.1.1 Apps from Open Telemetry Demo](#411-apps-from-open-telemetry-demo)
@@ -75,7 +76,6 @@ docker run --name lgtm -d -p 3000:3000 \
   grafana/otel-lgtm
 ```
 
-
 You can also run it in kubernetes. Again, this is really just for development purposes not intended for production workloads.
 
 ```sh
@@ -103,18 +103,12 @@ To instrument infrastructure and applications will rely on :
   - EBPF based instrumentation for producing OTEL traces
 - OpenTelemetry SDK's to instrument the code in various programming languages. ([docs](https://opentelemetry.io/docs/languages/))
 
-### 4.1 Infrastructure
+For the following sections we will require these env vars that define the different endpoints and credentials for the collectors to send data to the telemetry backends
 
-#### 4.1.1 Kubernetes clusters
+##
+ 4.1
 
-Grafana provides a helm chart to deploy Grafana Alloy on Kubernetes clusters. 
-
-These instances of Grafana Alloy also expose an OpenTelemetry Collector endpoint to receive metrics, logs and traces of applications deployed on that cluster that are instrumented with the OTEL SDK's. This ensures that application and infra data can be correlated out of the box.
-
-
-Here is a quickstart [install script](src/alloy-k8s-deploy.sh) with values for the most common usage on a vanilla k8s cluster.
-
-```bash
+```sh
 export KUBE_CLUSTER_NAME=sandbox
 export ALLOY_NAMESPACE=default
 
@@ -137,12 +131,25 @@ export PROFILES_USER=profilesuser
 export PROFILES_PASSWORD=profilespassword
 
 export GCLOUD_FARO=https://faro-collector-prod-eu-west-2.grafana.net/collect/TOKEN
+```
+
+### 4.1 Infrastructure
+
+#### 4.1.1 Kubernetes clusters
+
+Grafana provides a helm chart to deploy Grafana Alloy on Kubernetes clusters. 
+
+These instances of Grafana Alloy also expose an OpenTelemetry Collector endpoint to receive metrics, logs and traces of applications deployed on that cluster that are instrumented with the OTEL SDK's. This ensures that application and infra data can be correlated out of the box.
+
+
+Here is a quickstart [install script](src/alloy-k8s-deploy.sh) with values for the most common usage on a vanilla k8s cluster.
+
+```bash
 # comma separated list of namespaces
 export APP_NAMESPACES=apps,java-apps
 
-# 
+# download and execute alloy helm chart including default values
 curl -L https://raw.githubusercontent.com/alainpham/observability-with-opentelemetry-and-prometheus/refs/heads/master/src/alloy-k8s-deploy.sh | sh
-
 ```
 
 Links to different resources : 
@@ -160,13 +167,10 @@ wget -O /tmp/oteldemo.yaml https://raw.githubusercontent.com/alainpham/observabi
 
 envsubst '${GCLOUD_FARO} ${ALLOY_NAMESPACE}' < /tmp/oteldemo.yaml| kubectl apply -n otel-demo -f -
 
-
 # optional ingress
-
 wget -O /tmp/expose.yaml https://raw.githubusercontent.com/alainpham/observability-with-opentelemetry-and-prometheus/refs/heads/master/src/oteldemo/oteldemo/expose.yaml
 
 envsubst < /tmp/expose.yaml | kubectl apply -n otel-demo -f -
-
 ```
 
 #### 4.1.2 Linux Docker hosts
@@ -175,7 +179,56 @@ TODO
 
 #### 4.1.3 Linux Hosts
 
-TODO
+Download alloy binary relevant to your linux distribution :
+
+https://github.com/grafana/alloy/releases
+
+Here is an example on debian based distributions
+
+```sh
+curl -Lo /tmp/alloy.deb https://github.com/grafana/alloy/releases/download/v1.12.0/alloy-1.12.0-1.amd64.deb
+
+sudo apt install /tmp/alloy.deb
+```
+
+Populate configuration files, verify the following [file](src/alloy-linuxhost-config.alloy) that configure the node exporter metrics and opens up endpoints to receive OTLP, prom remotewrite and loki apis.
+
+```sh
+# setup aloy config file
+sudo curl -Lo https://raw.githubusercontent.com/alainpham/observability-with-opentelemetry-and-prometheus/refs/heads/master/src/alloy-linuxhost-config.alloy
+
+# set endpoints env vars and credientials
+cat<<EOF | sudo tee /etc/default/alloy
+CONFIG_FILE="/etc/alloy/config.alloy"
+CUSTOM_ARGS=""
+RESTART_ON_UPGRADE=true
+
+KUBE_CLUSTER_NAME=${KUBE_CLUSTER_NAME}
+ALLOY_NAMESPACE=${ALLOY_NAMESPACE}
+
+PROM_URL=${PROM_URL}
+PROM_REMOTEWRITE_PATH=${PROM_REMOTEWRITE_PATH}
+PROM_PATH_FOR_OPENCOST=${PROM_PATH_FOR_OPENCOST}
+PROM_USER=${PROM_USER}
+PROM_PASSWORD=${PROM_PASSWORD}
+
+LOKI_URL=${LOKI_URL}
+LOKI_USER=${LOKI_USER}
+LOKI_PASSWORD=${LOKI_PASSWORD}
+
+OTLP_URL=${OTLP_URL}
+OTLP_USER=${OTLP_USER}
+OTLP_PASSWORD=${OTLP_PASSWORD}
+
+PROFILES_URL=${PROFILES_URL}
+PROFILES_USER=${PROFILES_USER}
+PROFILES_PASSWORD=${PROFILES_PASSWORD}
+
+GCLOUD_FARO=${GCLOUD_FARO}
+EOF
+
+
+```
 
 #### 4.1.4 Windows Hosts
 
