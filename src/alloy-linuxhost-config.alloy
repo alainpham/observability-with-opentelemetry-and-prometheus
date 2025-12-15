@@ -58,6 +58,24 @@ loki.write "grafana_cloud_loki" {
   }
 }
 
+pyroscope.write "grafana_cloud_profiles" {
+  endpoint {
+    basic_auth {
+      password = sys.env("PROFILES_PASSWORD")
+      username = sys.env("PROFILES_USER")
+    }
+    url = sys.env("PROFILES_URL")
+
+    min_backoff_period = "500ms"
+    max_backoff_period = "5m"
+    max_backoff_retries = "10"
+  }
+
+  external_labels = {
+    "instance" = env("HOSTNAME")
+  }
+}
+
 // open up logs and metrics receiver
 
 prometheus.receive_http "metrics_receiver" {
@@ -75,6 +93,15 @@ loki.source.api "logs_receiver" {
     }
     forward_to = [loki.write.grafana_cloud_loki.receiver]
 }
+
+pyroscope.receive_http "profiles_receiver" {
+  http {
+    listen_address = "0.0.0.0"
+    listen_port = 4040
+  }
+  forward_to = [pyroscope.write.grafana_cloud_profiles.receiver]
+}
+
 // END BASE CONFIGURATION
 
 
@@ -344,8 +371,7 @@ beyla.ebpf "default" {
 // END EBPF TRACING
 
 // START PROFILING
-
-discovery.process "all" {
+discovery.process "ebpf_processes" {
   discover_config {
     cwd = true
     exe = true
@@ -358,8 +384,8 @@ discovery.process "all" {
 }
 
 
-discovery.relabel "alloy" {
-    targets = discovery.process.all.targets
+discovery.relabel "ebpf_processes" {
+    targets = discovery.process.ebpf_processes.targets
     // Filter needed processes
     rule {
       source_labels = ["__meta_process_exe"]
@@ -370,22 +396,8 @@ discovery.relabel "alloy" {
 }
 
 
-pyroscope.ebpf "instance" {
- forward_to     = [pyroscope.write.endpoint.receiver]
- targets = discovery.relabel.alloy.output
-}
-
-pyroscope.write "endpoint" {
-  endpoint {
-    basic_auth {
-      password = sys.env("PROFILES_PASSWORD")
-      username = sys.env("PROFILES_USER")
-    }
-    url = sys.env("PROFILES_URL")
-  }
-  external_labels = {
-  "env"      = "prod",
-  "instance" = env("HOSTNAME"),
-  }
+pyroscope.ebpf "ebpf_processes" {
+ targets = discovery.relabel.ebpf_processes.output
+ forward_to     = [pyroscope.write.grafana_cloud_profiles.receiver]
 }
 // END PROFILING
