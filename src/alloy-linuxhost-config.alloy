@@ -321,3 +321,69 @@ otelcol.auth.basic "grafana_cloud" {
 }
 
 // END OTLP INTEGRATION
+
+
+// START EBPF TRACING
+beyla.ebpf "default" {
+  discovery {
+    instrument {
+      open_ports = "80,443,8080,8443"
+    }
+  }
+
+  ebpf {
+    track_request_headers = true
+    context_propagation = "all"
+  }
+
+  output {
+    traces = [otelcol.exporter.otlphttp.grafana_cloud.input]
+  }
+}
+
+// END EBPF TRACING
+
+// START PROFILING
+
+discovery.process "all" {
+  discover_config {
+    cwd = true
+    exe = true
+    commandline = true
+    username = true
+    uid = true
+    cgroup_path = true
+    container_id = true
+  }
+}
+
+
+discovery.relabel "alloy" {
+    targets = discovery.process.all.targets
+    // Filter needed processes
+    rule {
+        source_labels = ["__meta_process_exe"]
+        target_label = "service_name"
+        action = "replace"
+    }
+}
+
+pyroscope.ebpf "instance" {
+ forward_to     = [pyroscope.write.endpoint.receiver]
+ targets = discovery.relabel.alloy.output
+}
+
+pyroscope.write "endpoint" {
+ endpoint {
+  basic_auth {
+   password = sys.env("PROFILES_PASSWORD")
+   username = sys.env("PROFILES_USER")
+  }
+  url = sys.env("PROFILES_URL")
+ }
+ external_labels = {
+  "env"      = "prod",
+  "instance" = env("HOSTNAME"),
+ }
+}
+// END PROFILING
