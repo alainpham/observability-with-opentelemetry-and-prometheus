@@ -72,7 +72,7 @@ pyroscope.write "grafana_cloud_profiles" {
   }
 
   external_labels = {
-    "instance" = env("HOSTNAME")
+    "instance" = env("HOSTNAME"),
   }
 }
 
