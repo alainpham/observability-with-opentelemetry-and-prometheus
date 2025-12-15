@@ -9,10 +9,10 @@
       - [3.2.1 All in one Docker container](#321-all-in-one-docker-container)
       - [3.2.1 The hard way! Run each component separately](#321-the-hard-way-run-each-component-separately)
   - [4. Instrumentation](#4-instrumentation)
-  - [](#)
-    - [4.1 Infrastructure](#41-infrastructure)
-      - [4.1.1 Kubernetes clusters](#411-kubernetes-clusters)
-      - [4.1.1 Apps from Open Telemetry Demo](#411-apps-from-open-telemetry-demo)
+    - [4.1 Common configuration](#41-common-configuration)
+    - [4.2 Infrastructure](#42-infrastructure)
+      - [4.2.1 Kubernetes clusters](#421-kubernetes-clusters)
+        - [4.2.1.1 Deploy Open Telemetry demo](#4211-deploy-open-telemetry-demo)
       - [4.1.2 Linux Docker hosts](#412-linux-docker-hosts)
       - [4.1.3 Linux Hosts](#413-linux-hosts)
       - [4.1.4 Windows Hosts](#414-windows-hosts)
@@ -103,10 +103,10 @@ To instrument infrastructure and applications will rely on :
   - EBPF based instrumentation for producing OTEL traces
 - OpenTelemetry SDK's to instrument the code in various programming languages. ([docs](https://opentelemetry.io/docs/languages/))
 
-For the following sections we will require these env vars that define the different endpoints and credentials for the collectors to send data to the telemetry backends
 
-##
- 4.1
+### 4.1 Common configuration
+
+For the following sections we will require these env vars that define the different endpoints and credentials for the collectors to send data to the telemetry backends
 
 ```sh
 export KUBE_CLUSTER_NAME=sandbox
@@ -133,9 +133,9 @@ export PROFILES_PASSWORD=profilespassword
 export GCLOUD_FARO=https://faro-collector-prod-eu-west-2.grafana.net/collect/TOKEN
 ```
 
-### 4.1 Infrastructure
+### 4.2 Infrastructure
 
-#### 4.1.1 Kubernetes clusters
+#### 4.2.1 Kubernetes clusters
 
 Grafana provides a helm chart to deploy Grafana Alloy on Kubernetes clusters. 
 
@@ -157,7 +157,7 @@ Links to different resources :
 - [Examples of Helm chart value files](https://github.com/grafana/k8s-monitoring-helm/tree/main/charts/k8s-monitoring/docs/examples)
 
 
-#### 4.1.1 Apps from Open Telemetry Demo
+##### 4.2.1.1 Deploy Open Telemetry demo
 
 Run these commands to deploy the otel demo preconfigured to send otlp data to alloy deployed with the k8s monitoring helm chart.
 
