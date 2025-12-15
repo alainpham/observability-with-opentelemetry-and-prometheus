@@ -300,7 +300,7 @@ otelcol.processor.transform "add_resource_attributes_as_metric_attributes" {
 otelcol.processor.batch "default" {
 	// https://grafana.com/docs/alloy/latest/reference/components/otelcol.processor.batch/
 	output {
-		metrics = [otelcol.exporter.otlphttp.grafana_cloud.input]
+	  metrics = [otelcol.exporter.otlphttp.grafana_cloud.input]
 		logs    = [otelcol.exporter.otlphttp.grafana_cloud.input]
 		traces  = [otelcol.exporter.otlphttp.grafana_cloud.input]
 	}
@@ -362,11 +362,13 @@ discovery.relabel "alloy" {
     targets = discovery.process.all.targets
     // Filter needed processes
     rule {
-        source_labels = ["__meta_process_exe"]
-        target_label = "service_name"
-        action = "replace"
+      source_labels = ["__meta_process_exe"]
+      target_label = "service_name"
+      regex = ".*/(.*)"
+      action = "replace"
     }
 }
+
 
 pyroscope.ebpf "instance" {
  forward_to     = [pyroscope.write.endpoint.receiver]
@@ -374,16 +376,16 @@ pyroscope.ebpf "instance" {
 }
 
 pyroscope.write "endpoint" {
- endpoint {
-  basic_auth {
-   password = sys.env("PROFILES_PASSWORD")
-   username = sys.env("PROFILES_USER")
+  endpoint {
+    basic_auth {
+      password = sys.env("PROFILES_PASSWORD")
+      username = sys.env("PROFILES_USER")
+    }
+    url = sys.env("PROFILES_URL")
   }
-  url = sys.env("PROFILES_URL")
- }
- external_labels = {
+  external_labels = {
   "env"      = "prod",
   "instance" = env("HOSTNAME"),
- }
+  }
 }
 // END PROFILING
