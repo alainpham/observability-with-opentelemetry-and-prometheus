@@ -177,6 +177,7 @@ You can run this [docker run](src/alloy-docker-run.sh) command to spin up an all
 
 ```sh
 # download alloy config
+sudo mkdir -p /etc/alloy/
 sudo curl -Lo /etc/alloy/config.alloy https://raw.githubusercontent.com/alainpham/observability-with-opentelemetry-and-prometheus/refs/heads/master/src/alloy-docker-config.alloy
 
 # start alloy docker container to collect telemetry data
