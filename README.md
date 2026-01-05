@@ -182,7 +182,7 @@ sudo curl -Lo /etc/alloy/config.alloy https://raw.githubusercontent.com/alainpha
 
 # start alloy docker container to collect telemetry data
 
-curl -L https://raw.githubusercontent.com/alainpham/observability-with-opentelemetry-and-prometheus/refs/heads/master/src/alloy-docker-run.sh | sh
+curl -L https://raw.githubusercontent.com/alainpham/observability-with-opentelemetry-and-prometheus/refs/heads/master/src/alloy-docker-run.sh | bash
 ```
 
 #### 4.1.3 Linux Hosts
