@@ -10,7 +10,7 @@
         -v "/var/log/journal:/var/log/journal:ro,rslave" \
         \
         -e PROM_URL="${PROM_URL}" \
-        -e PROM_REMOTEWRITE_PATH="${PROM_REMOTEWRITE_PATH}" \
+        -e "PROM_REMOTEWRITE_PATH=${PROM_REMOTEWRITE_PATH}" \
         -e PROM_USER="${PROM_USER}" \
         -e PROM_PASSWORD="${PROM_PASSWORD}" \
         -e LOKI_URL="${LOKI_URL}" \
