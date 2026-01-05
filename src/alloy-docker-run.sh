@@ -9,20 +9,20 @@
         -v "/var/run/docker.sock:/var/run/docker.sock:rw" \
         -v "/var/log/journal:/var/log/journal:ro,rslave" \
         \
-        -e PROM_URL=${PROM_URL} \
-        -e PROM_REMOTEWRITE_PATH=${PROM_REMOTEWRITE_PATH} \
-        -e PROM_USER=${PROM_USER} \
-        -e PROM_PASSWORD=${PROM_PASSWORD} \
-        -e LOKI_URL=${LOKI_URL} \
-        -e LOKI_USER=${LOKI_USER} \
-        -e LOKI_PASSWORD=${LOKI_PASSWORD} \
-        -e OTLP_URL=${OTLP_URL} \
-        -e OTLP_USER=${OTLP_USER} \
-        -e OTLP_PASSWORD=${OTLP_PASSWORD} \
-        -e PROFILES_URL=${PROFILES_URL} \
-        -e PROFILES_USER=${PROFILES_USER} \
-        -e PROFILES_PASSWORD=${PROFILES_PASSWORD} \
-        -e GCLOUD_FARO=${GCLOUD_FARO} \
+        -e PROM_URL="${PROM_URL}" \
+        -e PROM_REMOTEWRITE_PATH="${PROM_REMOTEWRITE_PATH}" \
+        -e PROM_USER="${PROM_USER}" \
+        -e PROM_PASSWORD="${PROM_PASSWORD}" \
+        -e LOKI_URL="${LOKI_URL}" \
+        -e LOKI_USER="${LOKI_USER}" \
+        -e LOKI_PASSWORD="${LOKI_PASSWORD}" \
+        -e OTLP_URL="${OTLP_URL}" \
+        -e OTLP_USER="${OTLP_USER}" \
+        -e OTLP_PASSWORD="${OTLP_PASSWORD}" \
+        -e PROFILES_URL="${PROFILES_URL}" \
+        -e PROFILES_USER="${PROFILES_USER}" \
+        -e PROFILES_PASSWORD="${PROFILES_PASSWORD}" \
+        -e GCLOUD_FARO="${GCLOUD_FARO}" \
         \
         -v "/var/lib/docker:/var/lib/docker:ro" \
         -v /dev/disk/:/dev/disk:ro \
