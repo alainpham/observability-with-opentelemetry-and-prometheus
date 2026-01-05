@@ -12,7 +12,6 @@
     - [4.1 Common configuration](#41-common-configuration)
     - [4.2 Infrastructure](#42-infrastructure)
       - [4.2.1 Kubernetes clusters](#421-kubernetes-clusters)
-        - [4.2.1.1 Deploy Open Telemetry demo](#4211-deploy-open-telemetry-demo)
       - [4.1.2 Linux Docker hosts](#412-linux-docker-hosts)
       - [4.1.3 Linux Hosts](#413-linux-hosts)
       - [4.1.4 Windows Hosts](#414-windows-hosts)
@@ -156,9 +155,6 @@ Links to different resources :
 - [Documentation of Helm Chart](https://github.com/grafana/k8s-monitoring-helm/blob/main/charts/k8s-monitoring/README.md)
 - [Examples of Helm chart value files](https://github.com/grafana/k8s-monitoring-helm/tree/main/charts/k8s-monitoring/docs/examples)
 
-
-##### 4.2.1.1 Deploy Open Telemetry demo
-
 Run these commands to deploy the otel demo preconfigured to send otlp data to alloy deployed with the k8s monitoring helm chart.
 
 ```sh
@@ -175,7 +171,18 @@ envsubst < /tmp/expose.yaml | kubectl apply -n otel-demo -f -
 
 #### 4.1.2 Linux Docker hosts
 
-TODO
+The following alloy config [file](src/alloy-docker-config.alloy) contains a config to monitor the linux exporter for host metrics, systemd for logs through journalctl, and docker metrics and logs through cadvisor. 
+
+You can run this [docker run](src/alloy-docker-run.sh) command to spin up an alloy instance.
+
+```sh
+# download alloy config
+sudo curl -Lo /etc/alloy/config.alloy https://raw.githubusercontent.com/alainpham/observability-with-opentelemetry-and-prometheus/refs/heads/master/src/alloy-docker-config.alloy
+
+# start alloy docker container to collect telemetry data
+
+curl -L https://raw.githubusercontent.com/alainpham/observability-with-opentelemetry-and-prometheus/refs/heads/master/src/alloy-docker-run.sh | sh
+```
 
 #### 4.1.3 Linux Hosts
 
@@ -231,15 +238,12 @@ sudo systemctl start alloy.service
 
 #### 4.1.4 Windows Hosts
 
-TODO
 
 ### 4. Backend Application
 
-TODO
 
 ### 4. Frontend Application
 
-TODO
 
 ## Observability Assets
 
