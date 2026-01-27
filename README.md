@@ -9,17 +9,19 @@
       - [3.2.1 All in one Docker container](#321-all-in-one-docker-container)
       - [3.2.1 The hard way! Run each component separately](#321-the-hard-way-run-each-component-separately)
   - [4. Instrumentation](#4-instrumentation)
-    - [4.1 Common configuration](#41-common-configuration)
+    - [4.1 Common configurations](#41-common-configurations)
     - [4.2 Infrastructure](#42-infrastructure)
       - [4.2.1 Kubernetes clusters](#421-kubernetes-clusters)
-      - [4.1.2 Linux Docker hosts](#412-linux-docker-hosts)
-      - [4.1.3 Linux Hosts](#413-linux-hosts)
-      - [4.1.4 Windows Hosts](#414-windows-hosts)
-    - [4. Backend Application](#4-backend-application)
-    - [4. Frontend Application](#4-frontend-application)
-  - [Observability Assets](#observability-assets)
-    - [Grafana Cloud](#grafana-cloud)
-    - [Open Source assets](#open-source-assets)
+      - [4.2.2 Linux Docker hosts](#422-linux-docker-hosts)
+      - [4.2.3 Linux Hosts](#423-linux-hosts)
+      - [4.2.4 Windows Hosts](#424-windows-hosts)
+    - [4.3 Backend Application](#43-backend-application)
+    - [4.4 Frontend Application](#44-frontend-application)
+    - [4.5 Middleware \& Databases](#45-middleware--databases)
+  - [5. Observability Assets \& Workflows](#5-observability-assets--workflows)
+    - [5.1 Grafana Cloud](#51-grafana-cloud)
+    - [5.2 Open Source assets](#52-open-source-assets)
+      - [5.2](#52)
 
 
 ## 1. Purpose of this guide
@@ -103,7 +105,7 @@ To instrument infrastructure and applications will rely on :
 - OpenTelemetry SDK's to instrument the code in various programming languages. ([docs](https://opentelemetry.io/docs/languages/))
 
 
-### 4.1 Common configuration
+### 4.1 Common configurations
 
 For the following sections we will require these env vars that define the different endpoints and credentials for the collectors to send data to the telemetry backends
 
@@ -169,7 +171,7 @@ wget -O /tmp/expose.yaml https://raw.githubusercontent.com/alainpham/observabili
 envsubst < /tmp/expose.yaml | kubectl apply -n otel-demo -f -
 ```
 
-#### 4.1.2 Linux Docker hosts
+#### 4.2.2 Linux Docker hosts
 
 The following alloy config [file](src/alloy-docker-config.alloy) contains a config to monitor the linux exporter for host metrics, systemd for logs through journalctl, and docker metrics and logs through cadvisor. 
 
@@ -185,7 +187,7 @@ sudo curl -sLo /etc/alloy/config.alloy https://raw.githubusercontent.com/alainph
 curl -sL https://raw.githubusercontent.com/alainpham/observability-with-opentelemetry-and-prometheus/refs/heads/master/src/alloy-docker-run.sh | sh
 ```
 
-#### 4.1.3 Linux Hosts
+#### 4.2.3 Linux Hosts
 
 Download alloy binary relevant to your linux distribution :
 
@@ -237,17 +239,37 @@ sudo systemctl enable alloy.service
 sudo systemctl start alloy.service
 ```
 
-#### 4.1.4 Windows Hosts
+#### 4.2.4 Windows Hosts
+
+TODO
+
+### 4.3 Backend Application
+
+TODO
+
+### 4.4 Frontend Application
+
+TODO
+
+### 4.5 Middleware & Databases
+
+TODO
+
+## 5. Observability Assets & Workflows 
+
+### 5.1 Grafana Cloud
+
+Grafana Cloud provides out of the box integrations and predefined workflows for 
+- AI assisted root cause analysis 
+- Monitoring most well know technologies (Kubernetes, Linux, Windows, Kafka, Postgres ..)
+- Real User Monitoring & APM [(video)](https://grafana.com/go/webinar/intro-to-application-and-frontend-observability-with-grafana-cloud/?pg=videos&plcmt=ondemand)
+- Capacity planning
+
+Latest keynote [video](https://www.youtube.com/watch?v=MJXpfFgFCjg) giving an overview on all features.
+
+![Grafana Cloud Integrations](graphics/grafana-cloud-integrations.png)
 
 
-### 4. Backend Application
+### 5.2 Open Source assets
 
-
-### 4. Frontend Application
-
-
-## Observability Assets
-
-### Grafana Cloud
-
-### Open Source assets
+#### 5.2
