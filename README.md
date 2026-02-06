@@ -7,7 +7,7 @@
     - [3.1 Using Grafana Cloud](#31-using-grafana-cloud)
     - [3.2 Open Source](#32-open-source)
       - [3.2.1 All in one Docker container](#321-all-in-one-docker-container)
-      - [3.2.1 The hard way! Run each component separately](#321-the-hard-way-run-each-component-separately)
+      - [3.2.1 Run each component separately](#321-run-each-component-separately)
   - [4. Instrumentation](#4-instrumentation)
     - [4.1 Common configurations](#41-common-configurations)
     - [4.2 Infrastructure](#42-infrastructure)
@@ -87,7 +87,7 @@ You can also run it in kubernetes. Again, this is really just for development pu
 kubectl apply -f https://raw.githubusercontent.com/alainpham/observability-with-opentelemetry-and-prometheus/refs/heads/master/src/lgtm.k8s.yaml -n default
 ```
 
-#### 3.2.1 The hard way! Run each component separately
+#### 3.2.1 Run each component separately
 
 If you want to deploy it the hard way at scale, you can also follow documentation of each component and deploy them separately.
 
