@@ -22,7 +22,7 @@
         -e PROFILES_URL="${PROFILES_URL}" \
         -e PROFILES_USER="${PROFILES_USER}" \
         -e PROFILES_PASSWORD="${PROFILES_PASSWORD}" \
-        -e GCLOUD_FARO="${GCLOUD_FARO}" \
+        -e FARO_URL="${FARO_URL}" \
         \
         -v "/var/lib/docker:/var/lib/docker:ro" \
         -v /dev/disk/:/dev/disk:ro \
@@ -32,7 +32,7 @@
         -p "9090:9090" \
         -p "3100:3100" \
         -p "4040:4040" \
-        grafana/alloy:v1.12.1 \
+        grafana/alloy:v1.13.0 \
         run \
         --server.http.listen-addr=0.0.0.0:12345 \
         --storage.path=/data \

@@ -12,6 +12,8 @@
     - [4.1 Common configurations](#41-common-configurations)
     - [4.2 Infrastructure](#42-infrastructure)
       - [4.2.1 Kubernetes clusters](#421-kubernetes-clusters)
+        - [4.2.1.1 Using Grafana Alloy](#4211-using-grafana-alloy)
+        - [4.2.1.1 Using Opentelemetry Kube Stack Operator](#4211-using-opentelemetry-kube-stack-operator)
       - [4.2.2 Linux Docker hosts](#422-linux-docker-hosts)
       - [4.2.3 Linux Hosts](#423-linux-hosts)
       - [4.2.4 Windows Hosts](#424-windows-hosts)
@@ -59,6 +61,8 @@ Go to grafana.com and create a free account here : [Grafana Cloud Free Account](
 
 ### 3.2 Open Source
 
+You can setup a Observability Platform the harder way with Open Source components.
+
 #### 3.2.1 All in one Docker container
 
 For development purposes you can use the all in one otel-lgtm docker image : 
@@ -96,14 +100,15 @@ If you want to deploy it the hard way at scale, you can also follow documentatio
 
 ## 4. Instrumentation
 
-To instrument infrastructure and applications will rely on :
+To instrument infrastructure and applications we can rely on Grafana Alloy :
 - Grafana Alloy is an all in one binary to build ingestion piplelines that can be composed of various components ([docs](https://grafana.com/docs/alloy/latest/))
-  - Prometheus exporters
+  - Prometheus exporters & scraping capability
   - Open Telemetry Collector
   - Continuous profiling instrumentation
   - EBPF based instrumentation for producing OTEL traces
 - OpenTelemetry SDK's to instrument the code in various programming languages. ([docs](https://opentelemetry.io/docs/languages/))
 
+It is also possible to use one the upstream components from the Prometheus (exporters, operators) and Open Telemetry ecosystem (OTEL collector, K8S operator ...)
 
 ### 4.1 Common configurations
 
@@ -111,6 +116,7 @@ For the following sections we will require these env vars that define the differ
 
 ```sh
 export KUBE_CLUSTER_NAME=sandbox
+export DEPLOYMENT_ENVIRONMENT_NAME=dev
 export ALLOY_NAMESPACE=default
 
 export PROM_URL=http://lgtm:9090
@@ -131,17 +137,18 @@ export PROFILES_URL=http://lgtm:4040
 export PROFILES_USER=profilesuser
 export PROFILES_PASSWORD=profilespassword
 
-export GCLOUD_FARO=https://faro-collector-prod-eu-west-2.grafana.net/collect/TOKEN
+export FARO_URL=https://faro-collector-prod-eu-west-2.grafana.net/collect/TOKEN
 ```
 
 ### 4.2 Infrastructure
 
 #### 4.2.1 Kubernetes clusters
 
+##### 4.2.1.1 Using Grafana Alloy
+
 Grafana provides a helm chart to deploy Grafana Alloy on Kubernetes clusters. 
 
 These instances of Grafana Alloy also expose an OpenTelemetry Collector endpoint to receive metrics, logs and traces of applications deployed on that cluster that are instrumented with the OTEL SDK's. This ensures that application and infra data can be correlated out of the box.
-
 
 Here is a quickstart [install script](src/alloy-k8s-deploy.sh) with values for the most common usage on a vanilla k8s cluster.
 
@@ -163,12 +170,18 @@ Run these commands to deploy the otel demo preconfigured to send otlp data to al
 # otel demo yaml
 wget -O /tmp/oteldemo.yaml https://raw.githubusercontent.com/alainpham/observability-with-opentelemetry-and-prometheus/refs/heads/master/src/oteldemo/oteldemo.yaml 
 
-envsubst '${GCLOUD_FARO} ${ALLOY_NAMESPACE}' < /tmp/oteldemo.yaml| kubectl apply -n otel-demo -f -
+envsubst '${FARO_URL} ${ALLOY_NAMESPACE}' < /tmp/oteldemo.yaml| kubectl apply -n otel-demo -f -
 
 # optional ingress
 wget -O /tmp/expose.yaml https://raw.githubusercontent.com/alainpham/observability-with-opentelemetry-and-prometheus/refs/heads/master/src/oteldemo/oteldemo/expose.yaml
 
 envsubst < /tmp/expose.yaml | kubectl apply -n otel-demo -f -
+```
+
+##### 4.2.1.1 Using Opentelemetry Kube Stack Operator
+
+```sh
+curl -L https://raw.githubusercontent.com/alainpham/observability-with-opentelemetry-and-prometheus/refs/heads/master/src/opentelemetry-kube-stack-deploy.sh | sh
 ```
 
 #### 4.2.2 Linux Docker hosts
@@ -231,7 +244,7 @@ PROFILES_URL=${PROFILES_URL}
 PROFILES_USER=${PROFILES_USER}
 PROFILES_PASSWORD=${PROFILES_PASSWORD}
 
-GCLOUD_FARO=${GCLOUD_FARO}
+FARO_URL=${FARO_URL}
 EOF
 
 
@@ -271,5 +284,7 @@ Latest keynote [video](https://www.youtube.com/watch?v=MJXpfFgFCjg) giving an ov
 
 
 ### 5.2 Open Source assets
+
+This section lists a set of assets (mainly dashboards) that allows to visualize
 
 #### 5.2

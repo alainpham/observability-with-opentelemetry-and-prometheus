@@ -1,0 +1,158 @@
+# https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-kube-stack
+
+## @param clusterName Name of the Kubernetes cluster to be used as a resource attribute in telemetry data.
+## When the Kubernetes provider supports naming the cluster (eg EKS, AKS, GKE...), this value should be set accordingly.
+## TODO overwrite this value
+clusterName: unknown_k8s_cluster
+crds:
+  installOtel: true
+  installPrometheus: true
+collectors:
+  daemon:
+    enabled: true
+    env:
+      - name: OTLP_USER
+        valueFrom:
+          secretKeyRef:
+            name: otlpbackend-auth
+            key: OTLP_USER
+      - name: OTLP_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: otlpbackend-auth
+            key: OTLP_PASSWORD
+      - name: OTLP_URL
+        valueFrom:
+          secretKeyRef:
+            name: otlpbackend-auth
+            key: OTLP_URL
+      - name: OTLP_BASIC_AUTH_HEADER
+        valueFrom:
+          secretKeyRef:
+            name: otlpbackend-auth
+            key: OTLP_BASIC_AUTH_HEADER
+    ## @param scrape_configs_file Path to a custom Prometheus scrape_configs file to be used by the OpenTelemetry Collector.
+    ## disable Prometheus scrapping as it assumes the Prometheus Node Exporter and CAdvisor are setup
+    scrape_configs_file: ""
+    presets:
+      logsCollection:
+        enabled: true
+        storeCheckpoints: true
+      hostMetrics:
+        enabled: true
+      kubeletMetrics:
+        enabled: true
+      kubernetesAttributes:
+        enabled: true
+      kubernetesEvents:
+        enabled: true
+      clusterMetrics:
+        enabled: true
+      annotationDiscovery:
+        logs:
+          enabled: false
+        metrics:
+          enabled: true
+    config:
+      connectors:
+        otlpbackend/connector:
+          host_identifiers: ["host.id", "k8s.node.uid", "k8s.node.name"]
+      extensions:
+        basicauth/otlpbackend:
+          client_auth:
+            username: "${env:OTLP_USER}"
+            password: "${env:OTLP_PASSWORD}"
+      exporters:
+        otlphttp/otlpbackend:
+          endpoint: "${env:OTLP_URL}"
+          auth:
+            authenticator: basicauth/otlpbackend
+      service:
+        extensions: [basicauth/otlpbackend]
+        pipelines:
+          traces:
+            exporters:
+              - otlphttp/otlpbackend
+              - otlpbackend/connector
+          metrics:
+            receivers:
+              - otlp
+              - otlpbackend/connector
+            exporters:
+              - otlphttp/otlpbackend
+          logs:
+            exporters:
+              - otlphttp/otlpbackend
+        telemetry:
+          resource:
+            k8s.namespace.name: "${env:OTEL_K8S_NAMESPACE}"
+            k8s.node.name: "${env:OTEL_K8S_NODE_NAME}"
+            k8s.node.ip: "${env:OTEL_K8S_NODE_IP}"
+            k8s.pod.name: "${env:OTEL_K8S_POD_NAME}"
+            k8s.pod.ip: "${env:OTEL_K8S_POD_IP}"
+            host.name: "${env:OTEL_K8S_NODE_NAME}"
+          metrics:
+            readers:
+              - periodic:
+                  exporter:
+                    otlp:
+                      protocol: http/protobuf
+                      endpoint: "${env:OTLP_URL}/v1/metrics"
+                      headers:
+                        - name: "authorization"
+                          value: "${env:OTLP_BASIC_AUTH_HEADER}"
+              - pull:
+                  exporter:
+                    ## Publish internal metrics to ease troubleshooting connecting to the pod when needed
+                    prometheus:
+                      host: '0.0.0.0'
+                      port: 8888
+          logs:
+            processors:
+              - batch:
+                  exporter:
+                    otlp:
+                      protocol: http/protobuf
+                      endpoint: "${env:OTLP_URL}/v1/logs"
+                      headers:
+                        - name: "authorization"
+                          value: "${env:OTLP_BASIC_AUTH_HEADER}"
+
+instrumentation:
+  enabled: true
+  name: "otel-instrumentation"
+  env:
+    - name: OTEL_SEMCONV_STABILITY_OPT_IN
+      value: "http,database,rpc,messaging"
+  exporter:
+    endpoint: http://opentelemetry-stack-daemon-collector.opentelemetry-operator-system.svc.cluster.local:4318
+  resource:
+    resourceAttributes:
+      deployment.environment.name: production # overwrite as needed
+  propagators:
+    - tracecontext
+    - baggage
+  sampler:
+    type: parentbased_always_on
+  java:
+    image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java:2.24.0
+    env:
+    - name: OTEL_INSTRUMENTATION_LOGBACK_APPENDER_EXPERIMENTAL_CAPTURE_KEY_VALUE_PAIR_ATTRIBUTES
+      value: "true"
+    - name: OTEL_INSTRUMENTATION_LOGBACK_APPENDER_EXPERIMENTAL_LOG_ATTRIBUTES
+      value: "true"
+    - name: OTEL_INSTRUMENTATION_MICROMETER_BASE_TIME_UNIT
+      value: s
+  nodejs:
+    image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs:0.67.2
+  dotnet:
+    image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-dotnet:1.13.0
+  python:
+    image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python:0.60b1
+opentelemetry-operator:
+  manager:
+    collectorImage:
+      repository: otel/opentelemetry-collector-contrib
+    podAnnotations:
+      prometheus.io/scrape: "true"
+      prometheus.io/port: "8080"
