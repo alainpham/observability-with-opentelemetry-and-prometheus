@@ -55,7 +55,7 @@ collectors:
           enabled: true
     config:
       connectors:
-        otlpbackend/connector:
+        grafanacloud/connector:
           host_identifiers: ["host.id", "k8s.node.uid", "k8s.node.name"]
       extensions:
         basicauth/otlpbackend:
@@ -73,11 +73,11 @@ collectors:
           traces:
             exporters:
               - otlphttp/otlpbackend
-              - otlpbackend/connector
+              - grafanacloud/connector
           metrics:
             receivers:
               - otlp
-              - otlpbackend/connector
+              - grafanacloud/connector
             exporters:
               - otlphttp/otlpbackend
           logs:
