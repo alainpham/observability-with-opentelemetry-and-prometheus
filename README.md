@@ -173,9 +173,11 @@ wget -O /tmp/oteldemo.yaml https://raw.githubusercontent.com/alainpham/observabi
 envsubst '${FARO_URL} ${ALLOY_NAMESPACE}' < /tmp/oteldemo.yaml| kubectl apply -n otel-demo -f -
 
 # optional ingress
-wget -O /tmp/expose.yaml https://raw.githubusercontent.com/alainpham/observability-with-opentelemetry-and-prometheus/refs/heads/master/src/oteldemo/oteldemo/expose.yaml
+wget -O /tmp/expose.yaml https://raw.githubusercontent.com/alainpham/observability-with-opentelemetry-and-prometheus/refs/heads/master/src/oteldemo/expose.yaml
 
-envsubst < /tmp/expose.yaml | kubectl apply -n otel-demo -f -
+export WILDCARD_DOMAIN=yourdomain.com
+
+envsubst '${WILDCARD_DOMAIN}' < /tmp/expose.yaml | kubectl apply -n otel-demo -f -
 ```
 
 ##### 4.2.1.1 Using Opentelemetry Kube Stack Operator

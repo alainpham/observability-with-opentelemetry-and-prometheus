@@ -10,9 +10,6 @@ metadata:
     app.kubernetes.io/instance: "frontend-proxy-main"
     app.kubernetes.io/version: "2.0.1"
   annotations:
-    nginx.ingress.kubernetes.io/ssl-passthrough: "false"
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
   rules:
   - host: oteldemo.${WILDCARD_DOMAIN}
