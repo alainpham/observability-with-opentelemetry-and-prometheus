@@ -167,10 +167,8 @@ Links to different resources :
 Run these commands to deploy the otel demo preconfigured to send otlp data to alloy deployed with the k8s monitoring helm chart.
 
 ```sh
-# otel demo yaml
-wget -O /tmp/oteldemo.yaml https://raw.githubusercontent.com/alainpham/observability-with-opentelemetry-and-prometheus/refs/heads/master/src/oteldemo/oteldemo.yaml 
-
-envsubst '${FARO_URL} ${ALLOY_NAMESPACE}' < /tmp/oteldemo.yaml| kubectl apply -n otel-demo -f -
+# otel demo helm chart
+curl -L https://raw.githubusercontent.com/alainpham/observability-with-opentelemetry-and-prometheus/refs/heads/master/src/opentelemetry-demo-deploy.sh | sh
 
 # optional ingress
 wget -O /tmp/expose.yaml https://raw.githubusercontent.com/alainpham/observability-with-opentelemetry-and-prometheus/refs/heads/master/src/oteldemo/expose.yaml
