@@ -280,7 +280,7 @@ Grafana Cloud provides out of the box integrations and predefined workflows for
 - Real User Monitoring & APM [(video)](https://grafana.com/go/webinar/intro-to-application-and-frontend-observability-with-grafana-cloud/?pg=videos&plcmt=ondemand)
 - Capacity planning
 
-Latest keynote [video](https://www.youtube.com/watch?v=MJXpfFgFCjg) giving an overview on all features.
+5 minute demo [video](https://www.youtube.com/watch?v=nGYqExnLmj4) giving an overview on all features.
 
 ![Grafana Cloud Integrations](graphics/grafana-cloud-integrations.png)
 
