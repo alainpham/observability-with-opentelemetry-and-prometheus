@@ -107,7 +107,7 @@ To instrument infrastructure and applications we can rely on Grafana Alloy :
   - Continuous profiling instrumentation
   - EBPF based instrumentation for producing OTEL traces
 - OpenTelemetry SDK's to instrument the code in various programming languages. ([docs](https://opentelemetry.io/docs/languages/))
-
+ 
 It is also possible to use one the upstream components from the Prometheus (exporters, operators) and Open Telemetry ecosystem (OTEL collector, K8S operator ...)
 
 ### 4.1 Common configurations

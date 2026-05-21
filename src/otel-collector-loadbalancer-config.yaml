@@ -1,0 +1,143 @@
+# OpenTelemetry Collector — gateway / load-balancer tier
+#
+# This collector sits in front of the tail-sampling collectors. It is
+# stateless and horizontally scalable: any number of replicas can run
+# behind a single L4 service. Its only job is to consistently route ALL
+# spans of a given trace to the SAME downstream collector replica, so
+# that the tail_sampling, spanmetrics and servicegraph stages in the
+# backend tier always see a complete trace.
+#
+#   apps ──► [Service / LB]
+#               │
+#               ▼
+#         ┌─────────────────────────────┐
+#         │  gateway collectors (this)  │   N replicas, stateless
+#         │  loadbalancing exporter     │   routing_key: traceID
+#         └──────────────┬──────────────┘
+#                        │ (shard by trace_id over DNS A records)
+#                        ▼
+#         ┌─────────────────────────────┐
+#         │  backend collectors         │   M replicas, sticky-per-trace
+#         │  (otel-collector-tail-      │   spanmetrics, servicegraph,
+#         │   sampling-config.yaml)     │   tail_sampling, export
+#         └─────────────────────────────┘
+#
+# The downstream pool MUST be addressable as a headless Kubernetes
+# Service (clusterIP: None) so the loadbalancing exporter sees one DNS
+# A record per backend pod and can hash trace_ids across them. A
+# regular ClusterIP service would collapse the pool to a single VIP
+# and break sticky routing.
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  memory_limiter:
+    check_interval: 5s
+    limit_percentage: 80
+    spike_limit_percentage: 25
+
+  # No batch processor on the trace path: batches mix spans from many
+  # trace_ids, which forces the loadbalancing exporter to split them
+  # again per request and adds latency. The exporter handles batching
+  # itself per downstream endpoint.
+
+  batch:
+    send_batch_size: 1000
+    timeout: 10s
+
+extensions:
+  basicauth/otlpbackend:
+    client_auth:
+      username: ${env:OTLP_USER}
+      password: ${env:OTLP_PASSWORD}
+  health_check:
+    endpoint: 0.0.0.0:13133
+
+exporters:
+  # Routes by trace_id (default routing_key) using consistent hashing
+  # over the resolved backend endpoints. When the resolver list
+  # changes (pods scale up/down), only the minimum set of trace_ids
+  # is reshuffled.
+  loadbalancing:
+    routing_key: traceID
+    protocol:
+      otlp:
+        timeout: 10s
+        tls:
+          insecure: true
+        # Backpressure / retry settings applied to each downstream conn.
+        sending_queue:
+          enabled: true
+          num_consumers: 4
+          queue_size: 1000
+        retry_on_failure:
+          enabled: true
+          initial_interval: 1s
+          max_interval: 30s
+          max_elapsed_time: 5m
+    resolver:
+      # Kubernetes-native resolver: watches Endpoints of a headless
+      # Service and updates the backend list as pods come and go.
+      # Replace name/ports/namespace with your backend service.
+      k8s:
+        service: otel-collector-backend.observability
+        ports:
+          - 4317
+      # Alternative: plain DNS A-record resolver. Use this outside
+      # Kubernetes, or if you prefer not to grant the gateway RBAC
+      # to read Endpoints. Comment out the k8s block above and
+      # uncomment this one.
+      # dns:
+      #   hostname: otel-collector-backend-headless.observability.svc.cluster.local
+      #   port: 4317
+      #   interval: 5s
+      #   timeout: 1s
+
+  # Metrics and logs do not need trace-affinity routing, so they go
+  # straight through to the same backends (or, equally valid, straight
+  # to the upstream OTLP backend — see service.pipelines below).
+  otlphttp/otlpbackend:
+    endpoint: ${env:OTLP_URL}
+    auth:
+      authenticator: basicauth/otlpbackend
+
+service:
+  extensions: [basicauth/otlpbackend, health_check]
+  pipelines:
+    # Traces are sharded by trace_id to the backend tier. Do NOT add
+    # processors that drop/duplicate spans here — sampling and
+    # metric generation must happen AFTER sharding so they see a
+    # complete trace.
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter]
+      exporters: [loadbalancing]
+
+    # Metrics and logs bypass the sharding logic. Sent straight to the
+    # upstream backend; if you'd rather funnel them through the
+    # backend collectors too, swap otlphttp/otlpbackend for an OTLP
+    # exporter pointing at the backend service.
+    metrics:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [otlphttp/otlpbackend]
+
+    logs:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [otlphttp/otlpbackend]
+
+  telemetry:
+    metrics:
+      readers:
+        - pull:
+            exporter:
+              prometheus:
+                host: 0.0.0.0
+                port: 8888
