@@ -125,7 +125,7 @@ collectors:
 collectorCommon:
   alloy:
     remoteConfig:
-      enabled: ${FLEET_ENABLED:-false}
+      enabled: false
       url: ${FLEET_URL}
       auth:
         type: basic

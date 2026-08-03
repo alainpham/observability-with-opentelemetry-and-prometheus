@@ -114,6 +114,8 @@ It is also possible to use one the upstream components from the Prometheus (expo
 
 For the following sections we will require these env vars that define the different endpoints and credentials for the collectors to send data to the telemetry backends
 
+This here is an example to send to a locally deployed lgtm stack:
+
 ```sh
 export KUBE_CLUSTER_NAME=sandbox
 export DEPLOYMENT_ENVIRONMENT_NAME=dev
@@ -121,7 +123,7 @@ export ALLOY_NAMESPACE=default
 
 export PROM_URL=http://lgtm:9090
 export PROM_REMOTEWRITE_PATH=/api/v1/write
-export PROM_PATH_FOR_OPENCOST=/api/prom
+export PROM_PATH_FOR_OPENCOST=
 export PROM_USER=promuser
 export PROM_PASSWORD=prompassword
 
@@ -139,6 +141,37 @@ export PROFILES_PASSWORD=profilespassword
 
 export FARO_URL=https://faro-collector-prod-eu-west-2.grafana.net/collect/TOKEN
 ```
+
+For grafana cloud it would look like this
+
+```sh
+export GCLOUD_PASSWORD=glc_eyJXXXX
+
+export KUBE_CLUSTER_NAME=sandbox
+export DEPLOYMENT_ENVIRONMENT_NAME=dev
+export ALLOY_NAMESPACE=default
+
+export PROM_URL=https://prometheus-prod-24-prod-eu-west-2.grafana.net
+export PROM_REMOTEWRITE_PATH=/api/prom/push
+export PROM_PATH_FOR_OPENCOST=/api/prom
+export PROM_USER=12345
+export PROM_PASSWORD=$GCLOUD_PASSWORD
+
+export LOKI_URL=https://logs-prod-012.grafana.net
+export LOKI_USER=12346
+export LOKI_PASSWORD=$GCLOUD_PASSWORD
+
+export OTLP_URL=https://otlp-gateway-prod-eu-west-2.grafana.net/otlp
+export OTLP_USER=12347
+export OTLP_PASSWORD=$GCLOUD_PASSWORD
+
+export PROFILES_URL=https://profiles-prod-002.grafana.net:443
+export PROFILES_USER=12348
+export PROFILES_PASSWORD=$GCLOUD_PASSWORD
+
+export FARO_URL=https://faro-collector-prod-eu-west-2.grafana.net/collect/123456789
+```
+
 
 ### 4.2 Infrastructure
 
