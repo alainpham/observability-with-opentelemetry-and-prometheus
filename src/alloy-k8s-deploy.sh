@@ -3,25 +3,25 @@
 helm repo add grafana https://grafana.github.io/helm-charts &&
   helm repo update &&
   helm upgrade --install --atomic --timeout 300s grafana-k8s-monitoring grafana/k8s-monitoring \
-    --namespace "${ALLOY_NAMESPACE}" --create-namespace --values - <<EOF
+    --version "^4" --namespace "${ALLOY_NAMESPACE}" --create-namespace --values - <<EOF
 cluster:
   name: ${KUBE_CLUSTER_NAME}
 destinations:
-  - name: grafana-cloud-metrics
+  grafana-cloud-metrics:
     type: prometheus
     url: "${PROM_URL}${PROM_REMOTEWRITE_PATH}"
     auth:
       type: basic
       username: "${PROM_USER}"
       password: $PROM_PASSWORD
-  - name: grafana-cloud-logs
+  grafana-cloud-logs:
     type: loki
     url: ${LOKI_URL}/loki/api/v1/push
     auth:
       type: basic
       username: "${LOKI_USER}"
       password: $LOKI_PASSWORD
-  - name: gc-otlp-endpoint
+  gc-otlp-endpoint:
     type: otlp
     url: ${OTLP_URL}
     protocol: http
@@ -35,7 +35,7 @@ destinations:
       enabled: true
     traces:
       enabled: true
-  - name: grafana-cloud-profiles
+  grafana-cloud-profiles:
     type: pyroscope
     url: ${PROFILES_URL}
     auth:
@@ -44,31 +44,40 @@ destinations:
       password: $PROFILES_PASSWORD
 clusterMetrics:
   enabled: true
-  opencost:
+  collector: alloy-metrics
+hostMetrics:
+  enabled: true
+  collector: alloy-metrics
+  linuxHosts:
     enabled: true
-    metricsSource: grafana-cloud-metrics
-    opencost:
-      exporter:
-        defaultClusterId: ${KUBE_CLUSTER_NAME}
-      prometheus:
-        existingSecretName: grafana-cloud-metrics-grafana-k8s-monitoring
-        external:
-          url: "${PROM_URL}${PROM_PATH_FOR_OPENCOST}"
-  node-exporter:
-    service:
-      port: 9101
-  kepler:
+  windowsHosts:
     enabled: true
+  energyMetrics:
+    enabled: true
+costMetrics:
+  enabled: true
+  collector: alloy-metrics
 annotationAutodiscovery:
   enabled: true
+  collector: alloy-metrics
+prometheusOperatorObjects:
+  enabled: true
+  collector: alloy-metrics
 clusterEvents:
   enabled: true
+  collector: alloy-singleton
 nodeLogs:
   enabled: true
-podLogs:
+  collector: alloy-logs
+podLogsViaLoki:
   enabled: true
+  collector: alloy-logs
+kubernetesManifests:
+  enabled: true
+  collector: alloy-singleton
 applicationObservability:
   enabled: true
+  collector: alloy-receiver
   receivers:
     otlp:
       grpc:
@@ -80,56 +89,77 @@ applicationObservability:
     zipkin:
       enabled: true
       port: 9411
-  connectors:
-    grafanaCloudMetrics:
-      enabled: true
 autoInstrumentation:
   enabled: false
+  collector: alloy-metrics
   beyla:
     deliverTracesToApplicationObservability: false
 profiling:
   enabled: true
+  collector: alloy-profiles
   ebpf:
     enabled: true
     namespaces: [ ${APP_NAMESPACES} ]
   java:
     enabled: true
     namespaces: [ ${APP_NAMESPACES} ]
-  pprof:
-    enabled: false
-integrations:
+collectors:
+  alloy-metrics:
+    presets:
+      - clustered
+      - statefulset
+  alloy-singleton:
+    presets:
+      - singleton
+  alloy-logs:
+    presets:
+      - filesystem-log-reader
+      - daemonset
+  alloy-receiver:
+    presets:
+      - deployment
+  alloy-profiles:
+    presets:
+      - privileged
+      - daemonset
+collectorCommon:
   alloy:
-    instances:
-      - name: alloy
-        labelSelectors:
-          app.kubernetes.io/name:
-            - alloy-metrics
-            - alloy-singleton
-            - alloy-logs
-            - alloy-receiver
-            - alloy-profiles
-alloy-metrics:
-  enabled: true
-alloy-singleton:
-  enabled: true
-alloy-logs:
-  enabled: true
-alloy-receiver:
-  enabled: true
-  alloy:
-    extraPorts:
-      - name: otlp-grpc
-        port: 4317
-        targetPort: 4317
-        protocol: TCP
-      - name: otlp-http
-        port: 4318
-        targetPort: 4318
-        protocol: TCP
-      - name: zipkin
-        port: 9411
-        targetPort: 9411
-        protocol: TCP
-alloy-profiles:
-  enabled: true
+    remoteConfig:
+      enabled: ${FLEET_ENABLED:-false}
+      url: ${FLEET_URL}
+      auth:
+        type: basic
+        username: "${FLEET_USER}"
+        password: $FLEET_PASSWORD
+telemetryServices:
+  kube-state-metrics:
+    deploy: true
+  node-exporter:
+    deploy: true
+  windows-exporter:
+    deploy: true
+  opencost:
+    deploy: true
+    metricsSource: grafana-cloud-metrics
+    opencost:
+      exporter:
+        defaultClusterId: ${KUBE_CLUSTER_NAME}
+      prometheus:
+        existingSecretName: grafana-cloud-metrics-grafana-k8s-monitoring
+        external:
+          url: "${PROM_URL}${PROM_PATH_FOR_OPENCOST}"
+  kepler:
+    deploy: true
+  k8s-manifest-tail:
+    deploy: true
+    config:
+      objects:
+        - apiVersion: v1
+          kind: Pod
+        - apiVersion: apps/v1
+          kind: Deployment
+        - apiVersion: apps/v1
+          kind: StatefulSet
+        - apiVersion: apps/v1
+          kind: DaemonSet
 EOF
