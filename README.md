@@ -195,7 +195,7 @@ Here is a quickstart [install script](src/alloy-k8s-deploy.sh) with values for t
 export APP_NAMESPACES=apps,java-apps,otel-demo
 
 # download and execute alloy helm chart including default values
-curl -L https://raw.githubusercontent.com/alainpham/observability-with-opentelemetry-and-prometheus/refs/heads/master/src/alloy-k8s-deploy.sh | sh
+curl -L https://raw.githubusercontent.com/alainpham/observability-with-opentelemetry-and-prometheus/refs/heads/master/src/alloy-k8s.sh | sh
 ```
 
 Links to different resources : 
