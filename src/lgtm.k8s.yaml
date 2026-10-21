@@ -57,6 +57,11 @@ spec:
       containers:
         - name: lgtm
           image: grafana/otel-lgtm:latest
+          env:
+            - name: GF_AUTH_ANONYMOUS_ENABLED
+              value: "false"
+            - name: GF_SECURITY_ADMIN_PASSWORD
+              value: password
           ports:
             - containerPort: 3000
             - containerPort: 4317

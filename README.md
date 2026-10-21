@@ -78,14 +78,19 @@ docker run --name lgtm -d -p 3000:3000 \
   -p 4418:4418 \
   -p 3100:3100 \
   -p 4040:4040 \
+  -e GF_AUTH_ANONYMOUS_ENABLED=false \
+  -e GF_SECURITY_ADMIN_PASSWORD=password \
   grafana/otel-lgtm
 ```
 
 You can also run it in kubernetes. Again, this is really just for development purposes not intended for production workloads.
 
 ```sh
-kubectl apply -f https://raw.githubusercontent.com/alainpham/observability-with-opentelemetry-and-prometheus/refs/heads/master/src/lgtm.k8s.yaml -n default
+kubectl create ns monitoring
+kubectl apply -f https://raw.githubusercontent.com/alainpham/observability-with-opentelemetry-and-prometheus/refs/heads/master/src/lgtm.k8s.yaml -n monitoring
 ```
+
+Now you can login to a Grafana instance with the credentials following :  `admin / password`
 
 #### 3.2.1 Run each component separately
 
@@ -117,9 +122,9 @@ For the following sections we will require these env vars that define the differ
 This here is an example to send to a locally deployed lgtm stack:
 
 ```sh
-export KUBE_CLUSTER_NAME=sandbox
+export KUBE_CLUSTER_NAME=codersandbox
 export DEPLOYMENT_ENVIRONMENT_NAME=dev
-export ALLOY_NAMESPACE=default
+export ALLOY_NAMESPACE=monitoring
 
 export PROM_URL=http://lgtm:9090
 export PROM_REMOTEWRITE_PATH=/api/v1/write
@@ -139,7 +144,7 @@ export PROFILES_URL=http://lgtm:4040
 export PROFILES_USER=profilesuser
 export PROFILES_PASSWORD=profilespassword
 
-export FARO_URL=https://faro-collector-prod-eu-west-2.grafana.net/collect/TOKEN
+export FARO_URL=http://lgtm:12347/collect
 ```
 
 For grafana cloud it would look like this
@@ -149,7 +154,7 @@ export GCLOUD_PASSWORD=glc_eyJXXXX
 
 export KUBE_CLUSTER_NAME=sandbox
 export DEPLOYMENT_ENVIRONMENT_NAME=dev
-export ALLOY_NAMESPACE=default
+export ALLOY_NAMESPACE=monitoring
 
 export PROM_URL=https://prometheus-prod-24-prod-eu-west-2.grafana.net
 export PROM_REMOTEWRITE_PATH=/api/prom/push
