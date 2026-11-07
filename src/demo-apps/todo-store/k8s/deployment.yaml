@@ -1,0 +1,66 @@
+# Namespace "apps" is created by ../../deploy.sh (not here, so `kubectl delete -f` never removes a shared namespace)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-store
+  namespace: apps
+  labels:
+    app: todo-store
+spec:
+  replicas: 1 # todos are in memory, so more replicas would each hold a different list
+  selector:
+    matchLabels:
+      app: todo-store
+  template:
+    metadata:
+      labels:
+        app: todo-store
+      annotations:
+        # OpenTelemetry Operator injects the Java agent (Instrumentation CR from opentelemetry-kube-stack-values.yml)
+        instrumentation.opentelemetry.io/inject-java: "opentelemetry-operator-system/otel-instrumentation"
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+      containers:
+        - name: todo-store
+          image: reg.k.codersandbox.com/todo-store:latest
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: "1"
+              memory: 512Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: todo-store
+  namespace: apps
+  labels:
+    app: todo-store
+spec:
+  type: ClusterIP
+  selector:
+    app: todo-store
+  ports:
+    - name: http
+      port: 80
+      targetPort: http

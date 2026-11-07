@@ -1,0 +1,66 @@
+# Namespace "apps" is created by ../../deploy.sh (not here, so `kubectl delete -f` never removes a shared namespace)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-notification-hub
+  namespace: apps
+  labels:
+    app: todo-notification-hub
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todo-notification-hub
+  template:
+    metadata:
+      labels:
+        app: todo-notification-hub
+      annotations:
+        # OpenTelemetry Operator injects Node.js auto-instrumentation (Instrumentation CR otel-instrumentation)
+        instrumentation.opentelemetry.io/inject-nodejs: "opentelemetry-operator-system/otel-instrumentation"
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+      containers:
+        - name: todo-notification-hub
+          image: reg.k.codersandbox.com/todo-notification-hub:latest
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 3000
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 3
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: todo-notification-hub
+  namespace: apps
+  labels:
+    app: todo-notification-hub
+spec:
+  type: ClusterIP
+  selector:
+    app: todo-notification-hub
+  ports:
+    - name: http
+      port: 80
+      targetPort: http

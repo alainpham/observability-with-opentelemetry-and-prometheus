@@ -1,6 +1,6 @@
 helm repo add grafana https://grafana.github.io/helm-charts
 helm repo update
-helm upgrade --install grafana-k8s-monitoring \
+helm upgrade --install grafana-cloud \
   --version "^4" --namespace monitoring --create-namespace \
   grafana/k8s-monitoring \
   --values - <<EOF
